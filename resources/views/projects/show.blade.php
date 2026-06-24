@@ -232,6 +232,7 @@
                     <div class="flex items-center gap-2">
                         <span class="w-2 h-2 rounded-full shrink-0
                             @if($task->status === 'concluido') bg-emerald-400
+                            @elseif($task->isOverdue()) bg-red-400
                             @elseif($task->status === 'em_andamento') bg-amber-400
                             @else bg-slate-300 dark:bg-gray-600 @endif">
                         </span>

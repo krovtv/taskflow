@@ -224,7 +224,7 @@
         <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-400 text-white flex items-center justify-center text-xs font-bold shadow-sm">3</div>
         <div>
             <h3 class="font-bold text-kvnavy dark:text-white text-base">Acompanhamento</h3>
-            <p class="text-[11px] text-slate-400 dark:text-slate-500 font-medium">Status, progresso e vínculo com projeto</p>
+            <p class="text-[11px] text-slate-400 dark:text-slate-500 font-medium">Status e vínculo com projeto</p>
         </div>
     </div>
 
@@ -245,24 +245,14 @@
         </div>
 
         <div>
-            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1.5">
-                Progresso
-                <span class="font-normal text-slate-400 dark:text-slate-500 text-xs ml-1">(0-100%)</span>
-            </label>
-            <div class="flex items-center gap-3">
-                <input type="range" id="progress-slider" min="0" max="100"
-                       value="{{ old('progress', $task->progress ?? 0) }}"
-                       oninput="document.getElementById('progress-input').value = this.value"
-                       class="flex-1 h-2 rounded-lg appearance-none cursor-pointer
-                              [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-gradient-to-r [&::-webkit-slider-thumb]:from-kvteal [&::-webkit-slider-thumb]:to-kvteal-dark [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-kvteal/30
-                              [&::-webkit-slider-runnable-track]:rounded-lg [&::-webkit-slider-runnable-track]:bg-slate-200 dark:bg-gray-700">
-                <div class="flex items-center gap-1 min-w-[72px] justify-end">
-                    <input type="number" id="progress-input" name="progress" min="0" max="100"
-                           value="{{ old('progress', $task->progress ?? 0) }}"
-                           oninput="document.getElementById('progress-slider').value = Math.min(100, Math.max(0, this.value || 0))"
-                           class="w-14 border border-slate-200 dark:border-gray-700 rounded-lg px-2 py-1.5 text-lg font-extrabold text-kvteal text-right tabular-nums bg-transparent dark:text-white outline-none focus:border-kvteal focus:ring-2 focus:ring-kvteal/20 transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
-                    <span class="text-lg font-extrabold text-kvteal">%</span>
-                </div>
+            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1.5">Progresso</label>
+            <div class="bg-slate-50 dark:bg-gray-800/50 rounded-xl px-4 py-3 border border-slate-200 dark:border-gray-700">
+                <p class="text-xs text-slate-500 dark:text-slate-400">
+                    Calculado automaticamente com base no status
+                    (<span class="font-semibold text-kvteal">0%</span> pendente,
+                    <span class="font-semibold text-amber-500">50%</span> em andamento,
+                    <span class="font-semibold text-emerald-500">100%</span> concluído)
+                </p>
             </div>
         </div>
 

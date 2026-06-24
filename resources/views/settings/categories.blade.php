@@ -53,7 +53,7 @@
                         @method('PUT')
 
                         <input type="text" name="name" value="{{ $cat->name }}" required maxlength="255"
-                               class="flex-1 border border-transparent hover:border-slate-200 dark:hover:border-gray-700 focus:border-kvteal focus:ring-2 focus:ring-kvteal/20 rounded-lg px-3 py-1.5 text-sm bg-transparent outline-none transition-all dark:text-white">
+                               class="flex-1 max-w-[220px] border border-transparent hover:border-slate-200 dark:hover:border-gray-700 focus:border-kvteal focus:ring-2 focus:ring-kvteal/20 rounded-lg px-3 py-1.5 text-sm bg-transparent outline-none transition-all dark:text-white truncate">
 
                         <select name="color" class="border border-slate-200 dark:border-gray-700 rounded-lg text-xs bg-white dark:bg-gray-800 outline-none focus:border-kvteal focus:ring-2 focus:ring-kvteal/20 transition-all dark:text-white py-1.5 px-2">
                             @foreach(\App\Models\Category::COLORS as $key => $meta)

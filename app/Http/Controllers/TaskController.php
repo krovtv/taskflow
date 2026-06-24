@@ -126,7 +126,17 @@ class TaskController extends Controller
         ]);
 
         $newStatus = $request->input('status');
-        $task->update(['status' => $newStatus]);
+        $data = ['status' => $newStatus];
+
+        if ($newStatus === Task::STATUS_PENDENTE) {
+            $data['progress'] = 0;
+        } elseif ($newStatus === Task::STATUS_CONCLUIDO) {
+            $data['progress'] = 100;
+        } elseif ($newStatus === Task::STATUS_ANDAMENTO && (!$task->progress || $task->progress === 0)) {
+            $data['progress'] = 50;
+        }
+
+        $task->update($data);
 
         // Gerar próxima recorrência se for concluída e for recorrente
         if ($newStatus === Task::STATUS_CONCLUIDO && $task->isRecurring()) {
@@ -224,7 +234,14 @@ class TaskController extends Controller
             return back()->with('error', 'Operação inválida.');
         }
 
-        $request->user()->tasks()->whereIn('id', $ids)->update(['status' => $status]);
+        $updateData = ['status' => $status];
+        if ($status === Task::STATUS_PENDENTE) {
+            $updateData['progress'] = 0;
+        } elseif ($status === Task::STATUS_CONCLUIDO) {
+            $updateData['progress'] = 100;
+        }
+
+        $request->user()->tasks()->whereIn('id', $ids)->update($updateData);
 
         return back()->with('success', count($ids) . ' tarefa(s) atualizada(s) para "' . Task::STATUSES[$status] . '".');
     }

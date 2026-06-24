@@ -17,7 +17,7 @@ class CategoryController extends Controller
         return view('settings.categories', compact('categories'));
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(Request $request): JsonResponse|RedirectResponse
     {
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
@@ -25,15 +25,19 @@ class CategoryController extends Controller
         ]);
 
         if ($request->user()->categories()->where('name', $data['name'])->exists()) {
-            return response()->json(['success' => false, 'message' => 'Já existe uma categoria com este nome.'], 422);
+            if ($request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => 'Já existe uma categoria com este nome.'], 422);
+            }
+            return redirect()->route('categories.index')->with('error', 'Já existe uma categoria com este nome.');
         }
 
         $category = $request->user()->categories()->create($data);
 
-        return response()->json([
-            'success' => true,
-            'category' => $category,
-        ]);
+        if ($request->wantsJson()) {
+            return response()->json(['success' => true, 'category' => $category]);
+        }
+
+        return redirect()->route('categories.index')->with('success', 'Categoria criada com sucesso.');
     }
 
     public function update(Request $request, Category $category): RedirectResponse

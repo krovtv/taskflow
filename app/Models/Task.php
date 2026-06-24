@@ -106,6 +106,23 @@ class Task extends Model
         return $this->hasMany(TaskAttachment::class);
     }
 
+    public function timeEntries(): HasMany
+    {
+        return $this->hasMany(TaskTimeEntry::class);
+    }
+
+    public function getTrackedMinutesAttribute(): int
+    {
+        return (int) $this->timeEntries()
+            ->whereNotNull('duration_minutes')
+            ->sum('duration_minutes');
+    }
+
+    public function getActiveTimerAttribute(): ?TaskTimeEntry
+    {
+        return $this->timeEntries()->active()->latest('started_at')->first();
+    }
+
     /**
      * Escopo: tarefas que vencem em um intervalo de horas a partir de agora,
      * e que ainda não foram notificadas.
@@ -126,6 +143,13 @@ class Task extends Model
             ->where('status', '!=', self::STATUS_CONCLUIDO);
     }
 
+    public function getProgressAttribute($value): int
+    {
+        if ($this->status === self::STATUS_PENDENTE) return 0;
+        if ($this->status === self::STATUS_CONCLUIDO) return 100;
+        return (int) ($value ?: 50);
+    }
+
     public function getCategoryLabelAttribute(): string
     {
         return $this->cat?->name ?? ucfirst($this->category ?? '');
@@ -139,7 +163,23 @@ class Task extends Model
 
     public function getStatusLabelAttribute(): string
     {
+        if ($this->isOverdue()) {
+            return 'Atrasado';
+        }
         return self::STATUSES[$this->status] ?? $this->status;
+    }
+
+    public function getStatusClassAttribute(): string
+    {
+        if ($this->isOverdue()) {
+            return 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-red-200 dark:border-red-800/50';
+        }
+        return match ($this->status) {
+            self::STATUS_PENDENTE => 'bg-slate-100 dark:bg-gray-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-gray-700',
+            self::STATUS_ANDAMENTO => 'bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800/50',
+            self::STATUS_CONCLUIDO => 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800/50',
+            default => 'bg-slate-100 dark:bg-gray-800 text-slate-600 dark:text-slate-400',
+        };
     }
 
     public function getPriorityLabelAttribute(): string

@@ -13,9 +13,10 @@
             <div class="flex items-center justify-between pt-6 border-t border-slate-100 dark:border-gray-800">
                 <div class="flex items-center gap-2">
                     <span class="w-2 h-2 rounded-full
-                        @if($task->status === 'pendente') bg-slate-400
+                        @if($task->status === 'concluido') bg-emerald-400
+                        @elseif($task->isOverdue()) bg-red-400
                         @elseif($task->status === 'em_andamento') bg-amber-400
-                        @else bg-emerald-400 @endif">
+                        @else bg-slate-400 @endif">
                     </span>
                     <span class="text-xs text-slate-400 dark:text-slate-500 font-medium">Status atual: <strong class="text-slate-600 dark:text-slate-300">{{ $task->status_label }}</strong></span>
                 </div>

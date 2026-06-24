@@ -139,10 +139,7 @@
                             </span>
                         </td>
                         <td class="px-5 py-4">
-                            <span class="text-xs font-semibold px-2.5 py-1 rounded-lg
-                                @if($task->status === 'pendente') bg-slate-100 dark:bg-gray-700 text-slate-500 dark:text-slate-400
-                                @elseif($task->status === 'em_andamento') bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400
-                                @else bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 @endif">
+                            <span class="text-xs font-semibold px-2.5 py-1 rounded-lg {{ $task->status_class }}">
                                 {{ $task->status_label }}
                             </span>
                         </td>

@@ -23,10 +23,7 @@
             <span class="text-xs px-2.5 py-1 rounded-full font-medium {{ $task->category_badge }}">
                 {{ $task->category_label }}
             </span>
-            <span class="text-xs font-semibold px-2.5 py-1 rounded-lg
-                @if($task->status === 'pendente') bg-slate-100 dark:bg-gray-800 text-slate-500 dark:text-slate-400
-                @elseif($task->status === 'em_andamento') bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400
-                @else bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 @endif">
+            <span class="text-xs font-semibold px-2.5 py-1 rounded-lg {{ $task->status_class }}">
                 {{ $task->status_label }}
             </span>
         </div>
@@ -84,10 +81,7 @@
                 <div>
                     <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1">Status</p>
                     <p class="text-sm font-semibold">
-                        <span class="px-2 py-0.5 rounded-lg text-xs font-semibold
-                            @if($task->status === 'pendente') bg-slate-100 dark:bg-gray-800 text-slate-500 dark:text-slate-400
-                            @elseif($task->status === 'em_andamento') bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400
-                            @else bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 @endif">
+                        <span class="px-2 py-0.5 rounded-lg text-xs font-semibold {{ $task->status_class }}">
                             {{ $task->status_label }}
                         </span>
                     </p>
@@ -130,6 +124,35 @@
                     </div>
                 </div>
                 @endif
+                {{-- TIMER --}}
+                <div x-data="taskTimer(@js($task->id))" x-init="init()" class="md:col-span-2">
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1">Tempo dedicado</p>
+                    <div class="flex flex-wrap items-center gap-3">
+                        <template x-if="!active">
+                            <button @click="start()"
+                                    class="text-xs font-semibold text-white bg-gradient-to-r from-kvteal to-kvteal-dark hover:from-[#0fa8b3] hover:to-[#0fa8b3] px-4 py-2 rounded-xl transition-all shadow-sm inline-flex items-center gap-1.5">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z"/></svg>
+                                Iniciar timer
+                            </button>
+                        </template>
+                        <template x-if="active">
+                            <div class="flex items-center gap-3">
+                                <div class="flex items-center gap-2 bg-slate-100 dark:bg-gray-800 rounded-xl px-3.5 py-2 border border-slate-200 dark:border-gray-700">
+                                    <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                                    <span class="text-lg font-extrabold text-kvnavy dark:text-white tabular-nums" x-text="elapsed"></span>
+                                </div>
+                                <button @click="stop()"
+                                        class="text-xs font-semibold text-red-500 hover:text-white bg-red-50 dark:bg-red-900/30 hover:bg-red-500 dark:hover:bg-red-500 border border-red-200 dark:border-red-800/50 hover:border-red-500 px-4 py-2 rounded-xl transition-all inline-flex items-center gap-1.5">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25v13.5m-7.5-13.5v13.5"/></svg>
+                                    Parar
+                                </button>
+                            </div>
+                        </template>
+                        <span class="text-xs text-slate-400 dark:text-slate-500 font-medium">
+                            <span class="font-semibold text-kvnavy dark:text-white tabular-nums">{{ $task->tracked_minutes }}</span> min registrados
+                        </span>
+                    </div>
+                </div>
                 <div>
                     <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1">Criada em</p>
                     <p class="text-sm font-semibold text-kvnavy dark:text-white">{{ $task->created_at->format('d/m/Y H:i') }}</p>
@@ -230,4 +253,68 @@
         </a>
     </div>
 </div>
+
+@push('scripts')
+<script>
+function taskTimer(taskId) {
+    return {
+        active: false,
+        elapsed: '00:00',
+        entryId: null,
+        interval: null,
+        init() {
+            fetch('/tasks/' + taskId + '/timer/status', {
+                headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '' }
+            }).then(r => r.json()).then(data => {
+                if (data.active) {
+                    this.active = true;
+                    this.entryId = data.entry.id;
+                    this.elapsed = this.formatTime(data.entry.elapsed_seconds);
+                    this.startCounter();
+                }
+            });
+        },
+        start() {
+            fetch('/tasks/' + taskId + '/timer/start', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '' }
+            }).then(r => r.json()).then(data => {
+                if (data.success) {
+                    this.active = true;
+                    this.entryId = data.entry.id;
+                    this.elapsed = '00:00';
+                    this.startCounter();
+                }
+            });
+        },
+        stop() {
+            fetch('/tasks/' + taskId + '/timer/stop', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '' }
+            }).then(r => r.json()).then(data => {
+                if (data.success) {
+                    this.active = false;
+                    this.entryId = null;
+                    clearInterval(this.interval);
+                    // Reload page to update tracked_minutes
+                    location.reload();
+                }
+            });
+        },
+        startCounter() {
+            let seconds = 0;
+            this.interval = setInterval(() => {
+                seconds++;
+                this.elapsed = this.formatTime(seconds);
+            }, 1000);
+        },
+        formatTime(s) {
+            const m = Math.floor(s / 60);
+            const sec = s % 60;
+            return String(m).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
+        }
+    }
+}
+</script>
+@endpush
 @endsection

@@ -69,6 +69,18 @@ Route::middleware('auth')->group(function () {
     Route::get('/notificacoes/{id}/redirect', [NotificationController::class, 'redirect'])->name('notifications.redirect');
     Route::patch('/notificacoes/ler-todas', [NotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
 
+    // Daily Log
+    Route::get('/diario', [\App\Http\Controllers\DailyLogController::class, 'index'])->name('daily-log.index');
+    Route::post('/diario', [\App\Http\Controllers\DailyLogController::class, 'update'])->name('daily-log.update');
+    Route::get('/diario/exportar/txt', [\App\Http\Controllers\DailyLogController::class, 'exportTxt'])->name('daily-log.export-txt');
+    Route::get('/diario/exportar/pdf', [\App\Http\Controllers\DailyLogController::class, 'exportPdf'])->name('daily-log.export-pdf');
+    Route::get('/diario/{date}', [\App\Http\Controllers\DailyLogController::class, 'showDate'])->name('daily-log.date');
+
+    // Task Timer
+    Route::post('/tasks/{task}/timer/start', [\App\Http\Controllers\TaskTimerController::class, 'start'])->name('tasks.timer.start');
+    Route::post('/tasks/{task}/timer/stop', [\App\Http\Controllers\TaskTimerController::class, 'stop'])->name('tasks.timer.stop');
+    Route::get('/tasks/timer/status', [\App\Http\Controllers\TaskTimerController::class, 'status'])->name('tasks.timer.status');
+
     Route::get('/configuracoes/telegram', [SettingsController::class, 'telegram'])->name('settings.telegram');
     Route::post('/configuracoes/telegram', [SettingsController::class, 'telegramUpdate'])->name('settings.telegram.update');
     Route::get('/configuracoes/telegram/teste', [SettingsController::class, 'telegramTest'])->name('settings.telegram.test');

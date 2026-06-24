@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
     <title>@yield('title', 'Dashboard') · KV Tech Organizer</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -191,6 +192,16 @@
                 @endif
             </a>
 
+            <a href="{{ route('daily-log.index') }}"
+               class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-sm
+                      {{ request()->routeIs('daily-log.*') ? 'bg-white/10 text-white font-semibold shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white' }}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+                Notas Diárias
+                @if(request()->routeIs('daily-log.*'))
+                    <span class="ml-auto w-1.5 h-1.5 rounded-full bg-amber-400 shadow-sm shadow-amber-400/50"></span>
+                @endif
+            </a>
+
             <div x-data="{ open: {{ request()->routeIs('studies.*') ? 'true' : 'false' }} }">
                 <button @click="open = !open"
                         class="w-full nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-sm
@@ -362,6 +373,14 @@
                             @endauth
                         </div>
                     </div>
+                </div>
+
+                {{-- TIMER ATIVO --}}
+                <div x-data="topTimer()" x-init="init()" x-show="active" x-cloak
+                     class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200/50 dark:border-amber-800/30">
+                    <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                    <a x-bind:href="'/tasks/' + taskId" class="text-xs font-semibold text-amber-700 dark:text-amber-300 hover:text-kvteal transition-colors truncate max-w-[120px]" x-text="taskTitle"></a>
+                    <span class="text-xs font-bold text-amber-600 dark:text-amber-400 tabular-nums" x-text="elapsed"></span>
                 </div>
 
                 {{-- BOTÃO NOVO --}}
@@ -545,5 +564,57 @@
     </div>
 </div>
 @stack('scripts')
+
+<script>
+function topTimer() {
+    return {
+        active: false,
+        taskId: null,
+        taskTitle: '',
+        elapsed: '00:00',
+        interval: null,
+        init() {
+            this.check();
+            setInterval(() => this.check(), 10000);
+        },
+        check() {
+            fetch('/tasks/timer/status', {
+                headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '' }
+            }).then(r => r.json()).then(data => {
+                if (data.active) {
+                    this.active = true;
+                    this.taskId = data.entry.task.id;
+                    this.taskTitle = data.entry.task.title;
+                    this.elapsed = this.formatTime(data.entry.elapsed_seconds);
+                    this.startCounter();
+                } else {
+                    this.active = false;
+                    this.stopCounter();
+                }
+            }).catch(() => {});
+        },
+        startCounter() {
+            if (this.interval) return;
+            let seconds = this.parseTime(this.elapsed);
+            this.interval = setInterval(() => {
+                seconds++;
+                this.elapsed = this.formatTime(seconds);
+            }, 1000);
+        },
+        stopCounter() {
+            if (this.interval) { clearInterval(this.interval); this.interval = null; }
+        },
+        formatTime(s) {
+            const m = Math.floor(s / 60);
+            const sec = s % 60;
+            return String(m).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
+        },
+        parseTime(str) {
+            const parts = str.split(':');
+            return parseInt(parts[0]) * 60 + parseInt(parts[1]);
+        }
+    }
+}
+</script>
 </body>
 </html>
