@@ -41,7 +41,7 @@ class DailyLogController extends Controller
             return response()->json(['success' => true, 'log' => $log]);
         }
 
-        return redirect()->route('daily-log.index')->with('success', 'Diário atualizado!');
+        return redirect()->route('daily-log.date', $data['date'])->with('success', 'Nota salva!');
     }
 
     public function showDate(Request $request, string $date)
