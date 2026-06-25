@@ -65,6 +65,7 @@ class Task extends Model
         'progress',
         'tags',
         'notified_at',
+        'sla_notified_at',
         'recurring_frequency',
         'recurring_end_date',
     ];
@@ -74,6 +75,7 @@ class Task extends Model
         return [
             'due_date' => 'datetime',
             'notified_at' => 'datetime',
+            'sla_notified_at' => 'datetime',
             'estimated_hours' => 'decimal:1',
             'progress' => 'integer',
             'recurring_end_date' => 'date',
