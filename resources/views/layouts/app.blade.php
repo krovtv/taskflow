@@ -330,6 +330,10 @@
             </div>
 
             <div class="flex items-center gap-2.5">
+                {{-- RELÓGIO DIGITAL --}}
+                <span x-data="{ now: new Date() }" x-init="setInterval(() => now = new Date(), 1000)"
+                      x-text="now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })"
+                      class="text-sm font-mono font-medium tabular-nums text-slate-400 dark:text-slate-500 min-w-[3.5rem] text-center"></span>
                 {{-- DARK MODE TOGGLE --}}
                 <button @click="dark = !dark"
                         class="w-9 h-9 rounded-xl bg-slate-100/80 dark:bg-gray-800 hover:bg-slate-200/80 dark:hover:bg-gray-700 flex items-center justify-center transition-all">
