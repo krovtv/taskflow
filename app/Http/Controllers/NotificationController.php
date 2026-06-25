@@ -40,7 +40,7 @@ class NotificationController extends Controller
         if ($notification) {
             $notification->markAsRead();
             $taskId = $notification->data['task_id'] ?? null;
-            if ($taskId) {
+            if ($taskId && \App\Models\Task::where('id', $taskId)->exists()) {
                 return redirect()->route('tasks.show', $taskId);
             }
         }
