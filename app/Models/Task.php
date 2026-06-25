@@ -58,7 +58,6 @@ class Task extends Model
         'project_phase_id',
         'title',
         'description',
-        'category',
         'due_date',
         'status',
         'priority',

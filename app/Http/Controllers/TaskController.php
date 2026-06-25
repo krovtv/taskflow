@@ -76,7 +76,6 @@ class TaskController extends Controller
         $data = $this->validateData($request);
         $data['status'] = $data['status'] ?? Task::STATUS_PENDENTE;
         $data['priority'] = $data['priority'] ?? Task::PRIORITY_MEDIA;
-        $data['category'] = '';
 
         $task = $request->user()->tasks()->create($data);
 
