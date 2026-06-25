@@ -172,36 +172,6 @@
                 @endif
             </a>
 
-            <a href="{{ route('projects.index') }}"
-               class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-sm
-                      {{ request()->routeIs('projects.*') ? 'bg-white/10 text-white font-semibold shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white' }}">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12"/></svg>
-                Projetos
-                @if(request()->routeIs('projects.*'))
-                    <span class="ml-auto w-1.5 h-1.5 rounded-full bg-purple-400 shadow-sm shadow-purple-400/50"></span>
-                @endif
-            </a>
-
-            <a href="{{ route('agenda.index') }}"
-               class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-sm
-                      {{ request()->routeIs('agenda.*') ? 'bg-white/10 text-white font-semibold shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white' }}">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/></svg>
-                Agenda
-                @if(request()->routeIs('agenda.*'))
-                    <span class="ml-auto w-1.5 h-1.5 rounded-full bg-kvteal shadow-sm shadow-kvteal/50"></span>
-                @endif
-            </a>
-
-            <a href="{{ route('daily-log.index') }}"
-               class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-sm
-                      {{ request()->routeIs('daily-log.*') ? 'bg-white/10 text-white font-semibold shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white' }}">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
-                Notas Diárias
-                @if(request()->routeIs('daily-log.*'))
-                    <span class="ml-auto w-1.5 h-1.5 rounded-full bg-amber-400 shadow-sm shadow-amber-400/50"></span>
-                @endif
-            </a>
-
             <div x-data="{ open: {{ request()->routeIs('studies.*') ? 'true' : 'false' }} }">
                 <button @click="open = !open"
                         class="w-full nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-sm
@@ -242,13 +212,33 @@
                 </div>
             </div>
 
-            <a href="{{ route('settings.telegram') }}"
+            <a href="{{ route('projects.index') }}"
                class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-sm
-                      {{ request()->routeIs('settings.telegram*') ? 'bg-white/10 text-white font-semibold shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white' }}">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334a2.126 2.126 0 00-.476-.095 48.64 48.64 0 00-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155"/></svg>
-                Telegram
-                @if(request()->routeIs('settings.telegram*'))
-                    <span class="ml-auto w-1.5 h-1.5 rounded-full bg-sky-400 shadow-sm shadow-sky-400/50"></span>
+                      {{ request()->routeIs('projects.*') ? 'bg-white/10 text-white font-semibold shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white' }}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12"/></svg>
+                Projetos
+                @if(request()->routeIs('projects.*'))
+                    <span class="ml-auto w-1.5 h-1.5 rounded-full bg-purple-400 shadow-sm shadow-purple-400/50"></span>
+                @endif
+            </a>
+
+            <a href="{{ route('agenda.index') }}"
+               class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-sm
+                      {{ request()->routeIs('agenda.*') ? 'bg-white/10 text-white font-semibold shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white' }}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/></svg>
+                Agenda
+                @if(request()->routeIs('agenda.*'))
+                    <span class="ml-auto w-1.5 h-1.5 rounded-full bg-kvteal shadow-sm shadow-kvteal/50"></span>
+                @endif
+            </a>
+
+            <a href="{{ route('daily-log.index') }}"
+               class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-sm
+                      {{ request()->routeIs('daily-log.*') ? 'bg-white/10 text-white font-semibold shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white' }}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+                Notas Diárias
+                @if(request()->routeIs('daily-log.*'))
+                    <span class="ml-auto w-1.5 h-1.5 rounded-full bg-amber-400 shadow-sm shadow-amber-400/50"></span>
                 @endif
             </a>
 
@@ -286,6 +276,20 @@
                class="flex items-center gap-3 px-3 py-2 rounded-xl text-white/30 hover:bg-white/5 hover:text-white/60 transition-all duration-200 text-xs mt-1">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z"/><path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6z"/></svg>
                 Gerenciar categorias
+            </a>
+
+            <div class="pt-6 pb-1">
+                <p class="px-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-white/20">Configurações</p>
+            </div>
+
+            <a href="{{ route('settings.telegram') }}"
+               class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-sm
+                      {{ request()->routeIs('settings.telegram*') ? 'bg-white/10 text-white font-semibold shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white' }}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334a2.126 2.126 0 00-.476-.095 48.64 48.64 0 00-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155"/></svg>
+                Telegram
+                @if(request()->routeIs('settings.telegram*'))
+                    <span class="ml-auto w-1.5 h-1.5 rounded-full bg-sky-400 shadow-sm shadow-sky-400/50"></span>
+                @endif
             </a>
         </nav>
 
@@ -582,11 +586,14 @@ function topTimer() {
                 headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '' }
             }).then(r => r.json()).then(data => {
                 if (data.active) {
+                    const wasActive = this.active;
                     this.active = true;
                     this.taskId = data.entry.task.id;
                     this.taskTitle = data.entry.task.title;
-                    this.elapsed = this.formatTime(data.entry.elapsed_seconds);
-                    this.startCounter();
+                    if (!wasActive) {
+                        this.elapsed = this.formatTime(data.entry.elapsed_seconds);
+                        this.startCounter();
+                    }
                 } else {
                     this.active = false;
                     this.stopCounter();

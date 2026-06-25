@@ -3,25 +3,33 @@
 use App\Http\Controllers\AgendaController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DailyLogController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SettingsController;
-use App\Http\Controllers\StudyDashboardController;
-use App\Http\Controllers\StudyFlashcardController;
-use App\Http\Controllers\StudySessionController;
-use App\Http\Controllers\StudySpecializationController;
+use App\Http\Controllers\Study\StudyDashboardController;
+use App\Http\Controllers\Study\StudyFlashcardController;
+use App\Http\Controllers\Study\StudyNoteController;
+use App\Http\Controllers\Study\StudySessionController;
+use App\Http\Controllers\Study\StudySpecializationController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\TaskTimerController;
 use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| Rotas públicas (visitante)
+| Página inicial
 |--------------------------------------------------------------------------
 */
 Route::get('/', fn () => redirect()->route('login'));
 
+/*
+|--------------------------------------------------------------------------
+| Autenticação (visitante)
+|--------------------------------------------------------------------------
+*/
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);
@@ -32,19 +40,24 @@ Route::middleware('guest')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| Rotas autenticadas
+| Autenticadas
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+    /*
+    |----------------------------------------------------------------------
+    | Dashboard
+    |----------------------------------------------------------------------
+    */
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::resource('projects', ProjectController::class);
-    Route::post('/projects/{project}/phases', [ProjectController::class, 'phaseStore'])->name('projects.phases.store');
-    Route::put('/projects/{project}/phases/{phase}', [ProjectController::class, 'phaseUpdate'])->name('projects.phases.update');
-    Route::delete('/projects/{project}/phases/{phase}', [ProjectController::class, 'phaseDestroy'])->name('projects.phases.destroy');
-
+    /*
+    |----------------------------------------------------------------------
+    | Tarefas
+    |----------------------------------------------------------------------
+    */
     Route::resource('tasks', TaskController::class);
     Route::patch('/tasks/{task}/status', [TaskController::class, 'updateStatus'])->name('tasks.status');
     Route::get('/tasks/search/json', [TaskController::class, 'search'])->name('tasks.search');
@@ -54,39 +67,83 @@ Route::middleware('auth')->group(function () {
     Route::post('/tasks/batch/status', [TaskController::class, 'batchStatus'])->name('tasks.batch.status');
     Route::delete('/tasks/batch/destroy', [TaskController::class, 'batchDestroy'])->name('tasks.batch.destroy');
 
+    // Timer de tarefas
+    Route::post('/tasks/{task}/timer/start', [TaskTimerController::class, 'start'])->name('tasks.timer.start');
+    Route::post('/tasks/{task}/timer/stop', [TaskTimerController::class, 'stop'])->name('tasks.timer.stop');
+    Route::get('/tasks/{task}/timer/status', [TaskTimerController::class, 'taskStatus'])->name('tasks.timer.task-status');
+    Route::get('/tasks/timer/status', [TaskTimerController::class, 'status'])->name('tasks.timer.status');
+
+    /*
+    |----------------------------------------------------------------------
+    | Projetos
+    |----------------------------------------------------------------------
+    */
+    Route::resource('projects', ProjectController::class);
+    Route::post('/projects/{project}/phases', [ProjectController::class, 'phaseStore'])->name('projects.phases.store');
+    Route::put('/projects/{project}/phases/{phase}', [ProjectController::class, 'phaseUpdate'])->name('projects.phases.update');
+    Route::delete('/projects/{project}/phases/{phase}', [ProjectController::class, 'phaseDestroy'])->name('projects.phases.destroy');
+
+    /*
+    |----------------------------------------------------------------------
+    | Categorias
+    |----------------------------------------------------------------------
+    */
     Route::get('/configuracoes/categorias', [CategoryController::class, 'index'])->name('categories.index');
     Route::post('/categorias', [CategoryController::class, 'store'])->name('categories.store');
     Route::put('/categorias/{category}', [CategoryController::class, 'update'])->name('categories.update');
     Route::delete('/categorias/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
 
+    /*
+    |----------------------------------------------------------------------
+    | Agenda
+    |----------------------------------------------------------------------
+    */
     Route::get('/agenda', [AgendaController::class, 'index'])->name('agenda.index');
 
-    Route::get('/relatorios', [ReportController::class, 'index'])->name('reports.index');
-    Route::get('/relatorios/pdf', [ReportController::class, 'pdf'])->name('reports.pdf');
+    /*
+    |----------------------------------------------------------------------
+    | Notas Diárias
+    |----------------------------------------------------------------------
+    */
+    Route::get('/diario', [DailyLogController::class, 'index'])->name('daily-log.index');
+    Route::post('/diario', [DailyLogController::class, 'update'])->name('daily-log.update');
+    Route::get('/diario/exportar/txt', [DailyLogController::class, 'exportTxt'])->name('daily-log.export-txt');
+    Route::get('/diario/exportar/pdf', [DailyLogController::class, 'exportPdf'])->name('daily-log.export-pdf');
+    Route::get('/diario/{date}', [DailyLogController::class, 'showDate'])->name('daily-log.date');
 
+    /*
+    |----------------------------------------------------------------------
+    | Notificações
+    |----------------------------------------------------------------------
+    */
     Route::get('/notificacoes', [NotificationController::class, 'index'])->name('notifications.index');
     Route::patch('/notificacoes/{id}/ler', [NotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::get('/notificacoes/{id}/redirect', [NotificationController::class, 'redirect'])->name('notifications.redirect');
     Route::patch('/notificacoes/ler-todas', [NotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
 
-    // Daily Log
-    Route::get('/diario', [\App\Http\Controllers\DailyLogController::class, 'index'])->name('daily-log.index');
-    Route::post('/diario', [\App\Http\Controllers\DailyLogController::class, 'update'])->name('daily-log.update');
-    Route::get('/diario/exportar/txt', [\App\Http\Controllers\DailyLogController::class, 'exportTxt'])->name('daily-log.export-txt');
-    Route::get('/diario/exportar/pdf', [\App\Http\Controllers\DailyLogController::class, 'exportPdf'])->name('daily-log.export-pdf');
-    Route::get('/diario/{date}', [\App\Http\Controllers\DailyLogController::class, 'showDate'])->name('daily-log.date');
+    /*
+    |----------------------------------------------------------------------
+    | Relatórios
+    |----------------------------------------------------------------------
+    */
+    Route::get('/relatorios', [ReportController::class, 'index'])->name('reports.index');
+    Route::get('/relatorios/pdf', [ReportController::class, 'pdf'])->name('reports.pdf');
 
-    // Task Timer
-    Route::post('/tasks/{task}/timer/start', [\App\Http\Controllers\TaskTimerController::class, 'start'])->name('tasks.timer.start');
-    Route::post('/tasks/{task}/timer/stop', [\App\Http\Controllers\TaskTimerController::class, 'stop'])->name('tasks.timer.stop');
-    Route::get('/tasks/timer/status', [\App\Http\Controllers\TaskTimerController::class, 'status'])->name('tasks.timer.status');
-
+    /*
+    |----------------------------------------------------------------------
+    | Configurações
+    |----------------------------------------------------------------------
+    */
     Route::get('/configuracoes/telegram', [SettingsController::class, 'telegram'])->name('settings.telegram');
     Route::post('/configuracoes/telegram', [SettingsController::class, 'telegramUpdate'])->name('settings.telegram.update');
     Route::get('/configuracoes/telegram/teste', [SettingsController::class, 'telegramTest'])->name('settings.telegram.test');
     Route::get('/configuracoes/telegram/desconectar', [SettingsController::class, 'telegramDisconnect'])->name('settings.telegram.disconnect');
 
-    // Study module
+    /*
+    |----------------------------------------------------------------------
+    | Estudos
+    |----------------------------------------------------------------------
+    */
     Route::prefix('estudos')->name('studies.')->group(function () {
         Route::get('/', [StudyDashboardController::class, 'index'])->name('dashboard');
 

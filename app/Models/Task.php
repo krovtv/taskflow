@@ -150,6 +150,46 @@ class Task extends Model
         return (int) ($value ?: 50);
     }
 
+    public function getDateProgressAttribute(): int
+    {
+        if (!$this->due_date) return 0;
+        if ($this->status === self::STATUS_CONCLUIDO) return 100;
+
+        $now = now();
+        $due = $this->due_date;
+
+        // Não recorrente ou primeiro ciclo (due_date no futuro)
+        if (!$this->isRecurring() || $due->isFuture()) {
+            $created = $this->created_at ?? $due->copy()->subDays(7);
+            if ($now->lessThanOrEqualTo($created)) return 0;
+            if ($due->isPast()) return 100;
+            $total = max(1, $created->diffInMinutes($due));
+            $elapsed = max(0, $created->diffInMinutes($now));
+            return min(100, (int) round(($elapsed / $total) * 100));
+        }
+
+        // Recorrente com due_date passado → calcular dentro do ciclo
+        $nextDue = $this->getNextRecurringDueDate();
+        if (!$nextDue) return 100;
+
+        $prevDue = $nextDue->copy();
+        $freq = $this->recurring_frequency;
+        $prevDue = match ($freq) {
+            'daily' => $prevDue->subDay(),
+            'weekly' => $prevDue->subWeek(),
+            'monthly' => $prevDue->subMonth(),
+            'yearly' => $prevDue->subYear(),
+            default => $prevDue->subMonth(),
+        };
+
+        if ($now->lessThanOrEqualTo($prevDue)) return 0;
+
+        $total = max(1, $prevDue->diffInMinutes($nextDue));
+        $elapsed = max(0, $prevDue->diffInMinutes($now));
+
+        return min(100, (int) round(($elapsed / $total) * 100));
+    }
+
     public function getCategoryLabelAttribute(): string
     {
         return $this->cat?->name ?? ucfirst($this->category ?? '');

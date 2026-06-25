@@ -31,8 +31,8 @@
             <template x-if="cards.length > 0">
                 <div>
                     <div class="flex items-center justify-center gap-2 mb-6">
-                        <span class="w-2.5 h-2.5 rounded-full" :class="cards[index].dot"></span>
-                        <span class="text-xs font-medium text-slate-400 dark:text-slate-500" x-text="cards[index].specialization"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" :class="cards[index].specialization?.dot ?? 'bg-slate-400'"></span>
+                        <span class="text-xs font-medium text-slate-400 dark:text-slate-500" x-text="cards[index].specialization?.name ?? '—'"></span>
                     </div>
                     <p class="text-xl font-bold text-kvnavy dark:text-white leading-relaxed" x-text="cards[index].front"></p>
 

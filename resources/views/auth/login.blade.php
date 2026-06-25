@@ -2,17 +2,20 @@
 @section('title', 'Entrar')
 
 @section('content')
-    <h2 class="text-xl font-extrabold text-kvnavy mb-1 tracking-tight">Bem-vindo de volta</h2>
+    <h2 class="text-xl font-extrabold text-kvnavy dark:text-white mb-1 tracking-tight">Bem-vindo de volta</h2>
     <p class="text-sm text-slate-400 mb-7 font-medium">Acesse sua conta para continuar organizado.</p>
 
     @if($errors->any())
-        <div class="mb-5 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800/50 rounded-xl px-4 py-3 text-sm font-medium flex items-center gap-2">
-            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"/></svg>
-            {{ $errors->first() }}
+        <div class="mb-5 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800/50 rounded-xl px-4 py-3 text-sm font-medium">
+            <ul class="list-disc pl-4 space-y-1">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
         </div>
     @endif
 
-    <form method="POST" action="{{ route('login') }}" class="space-y-5" autocomplete="off">
+    <form method="POST" action="{{ route('login') }}" class="space-y-5">
         @csrf
         <div>
             <label class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1.5">E-mail</label>
@@ -33,7 +36,7 @@
                 </div>
                 <input type="password" name="password" required autocomplete="current-password"
                        placeholder="• • • • • • • •"
-                       class="w-full border border-slate-200 dark:border-gray-700 rounded-xl pl-10 pr-4 py-3 text-sm bg-slate-50 dark:bg-gray-800 focus:bg-white dark:focus:bg-gray-800 focus:border-kvteal focus:ring-2 focus:ring-kvteal/20 transition-all outline-none placeholder:text-slate-300 dark:placeholder:text-slate-500">
+                       class="w-full border border-slate-200 dark:border-gray-700 rounded-xl pl-10 pr-4 py-3 text-sm bg-slate-50 dark:bg-gray-800 focus:bg-white dark:focus:bg-gray-800 focus:border-kvteal focus:ring-2 focus:ring-kvteal/20 transition-all outline-none placeholder:text-slate-300 dark:placeholder:text-slate-500 @error('password') border-red-300 dark:border-red-700 @enderror">
             </div>
         </div>
         <label class="flex items-center gap-2.5 text-sm text-slate-500 dark:text-slate-400 cursor-pointer group">

@@ -2,7 +2,7 @@
 @section('title', 'Criar conta')
 
 @section('content')
-    <h2 class="text-xl font-extrabold text-kvnavy mb-1 tracking-tight">Crie sua conta</h2>
+    <h2 class="text-xl font-extrabold text-kvnavy dark:text-white mb-1 tracking-tight">Crie sua conta</h2>
     <p class="text-sm text-slate-400 mb-7 font-medium">Comece a organizar estudos, projetos e trabalho.</p>
 
     @if($errors->any())
@@ -16,7 +16,7 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ route('register') }}" class="space-y-5" autocomplete="off">
+    <form method="POST" action="{{ route('register') }}" class="space-y-5">
         @csrf
         <div>
             <label class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1.5">Nome</label>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Project;
 use App\Models\Task;
 use App\Models\TaskAttachment;
+use App\Models\TaskTimeEntry;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -132,11 +133,26 @@ class TaskController extends Controller
             $data['progress'] = 0;
         } elseif ($newStatus === Task::STATUS_CONCLUIDO) {
             $data['progress'] = 100;
-        } elseif ($newStatus === Task::STATUS_ANDAMENTO && (!$task->progress || $task->progress === 0)) {
-            $data['progress'] = 50;
+        } elseif ($newStatus === Task::STATUS_ANDAMENTO) {
+            $data['progress'] = ($task->progress && $task->progress < 100) ? $task->progress : 50;
         }
 
         $task->update($data);
+
+        // Parar timer se a tarefa foi concluída
+        if ($newStatus === Task::STATUS_CONCLUIDO) {
+            $activeTimer = $task->timeEntries()
+                ->where('user_id', $request->user()->id)
+                ->whereNull('ended_at')
+                ->latest('started_at')
+                ->first();
+            if ($activeTimer) {
+                $activeTimer->update([
+                    'ended_at' => now(),
+                    'duration_minutes' => (int) $activeTimer->started_at->diffInMinutes(now()),
+                ]);
+            }
+        }
 
         // Gerar próxima recorrência se for concluída e for recorrente
         if ($newStatus === Task::STATUS_CONCLUIDO && $task->isRecurring()) {
@@ -242,6 +258,13 @@ class TaskController extends Controller
         }
 
         $request->user()->tasks()->whereIn('id', $ids)->update($updateData);
+
+        if ($status === Task::STATUS_CONCLUIDO) {
+            TaskTimeEntry::whereIn('task_id', $ids)
+                ->where('user_id', $request->user()->id)
+                ->whereNull('ended_at')
+                ->update(['ended_at' => now()]);
+        }
 
         return back()->with('success', count($ids) . ' tarefa(s) atualizada(s) para "' . Task::STATUSES[$status] . '".');
     }

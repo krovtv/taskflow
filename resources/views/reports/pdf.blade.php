@@ -28,6 +28,7 @@
         .badge-alta { background: #fffbeb; color: #d97706; }
         .badge-media { background: #eff6ff; color: #2563eb; }
         .badge-baixa { background: #f1f5f9; color: #64748b; }
+        .badge-atrasada { background: #fef2f2; color: #dc2626; }
         .badge-pendente { background: #f1f5f9; color: #64748b; }
         .badge-em_andamento { background: #fffbeb; color: #d97706; }
         .badge-concluido { background: #f0fdf4; color: #16a34a; }
@@ -106,7 +107,7 @@
                         <td>{{ $task->category_label }}</td>
                         <td><span class="badge badge-{{ $task->priority }}">{{ $task->priority_label }}</span></td>
                         <td style="white-space:nowrap;">{{ $task->due_date->format('d/m/Y H:i') }}</td>
-                        <td><span class="badge badge-{{ $task->status }}">{{ $task->status_label }}</span></td>
+                        <td><span class="badge {{ $task->isOverdue() ? 'badge-atrasada' : 'badge-' . $task->status }}">{{ $task->status_label }}</span></td>
                         <td style="white-space:nowrap;">
                             @if($task->progress !== null) {{ $task->progress }}% @else — @endif
                         </td>

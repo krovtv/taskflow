@@ -114,9 +114,7 @@
                     <span class="text-xs font-medium bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 px-2.5 py-0.5 rounded-full">{{ $due }} p/ revisar</span>
                 @endif
             </div>
-            @if($due > 0)
-                <a href="{{ route('studies.flashcards.review') }}" class="bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-semibold px-4 py-1.5 rounded-lg transition-all shadow-sm">Revisar agora</a>
-            @endif
+            <a href="{{ route('studies.flashcards.review') }}" class="bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-semibold px-4 py-1.5 rounded-lg transition-all shadow-sm">Revisar agora</a>
         </div>
 
         {{-- LISTA DE FLASHCARDS --}}
@@ -124,6 +122,7 @@
             @forelse($flashcards as $card)
                 @php $dot = $card->specialization?->dot ?? 'bg-slate-400'; @endphp
                 <div class="bg-white dark:bg-gray-900 rounded-xl border border-slate-200/70 dark:border-gray-700/50 px-5 py-3.5 flex items-start gap-3 group shadow-sm hover:shadow-md transition-all">
+                    @php $cardJson = json_encode(['id' => $card->id, 'front' => $card->front, 'back' => $card->back, 'spec' => $card->study_specialization_id, 'difficulty' => $card->difficulty]); @endphp
                     <span class="w-2 h-2 rounded-full {{ $dot }} mt-2 shrink-0"></span>
                     <div class="flex-1 min-w-0">
                         <div class="flex items-center gap-2 mb-1">
@@ -137,7 +136,8 @@
                         <p class="text-xs text-slate-400 dark:text-slate-500 leading-relaxed">{{ Str::limit($card->back, 160) }}</p>
                     </div>
                     <div class="flex items-center gap-1.5 shrink-0 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-all duration-200">
-                        <button @click="$dispatch('open-edit', { id: {{ $card->id }}, front: '{{ str_replace("'", "\\'", $card->front) }}', back: '{{ str_replace("'", "\\'", $card->back) }}', spec: {{ $card->study_specialization_id }}, difficulty: {{ $card->difficulty }} })"
+                        <button @click="$dispatch('open-edit', JSON.parse($el.dataset.card))"
+                                data-card='{{ $cardJson }}'
                                 class="text-xs font-semibold text-kvteal hover:text-white hover:bg-kvteal bg-kvteal/10 px-2.5 py-1.5 rounded-lg transition-all">
                             Editar
                         </button>

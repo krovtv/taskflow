@@ -28,7 +28,7 @@ class ReportController extends Controller
         $stats = [
             'total' => $tasks->count(),
             'pendentes' => $tasks->where('status', Task::STATUS_PENDENTE)->count(),
-            'andamento' => $tasks->where('status', Task::STATUS_ANDAMENTO)->count(),
+            'andamento' => $tasks->filter(fn ($t) => $t->status === Task::STATUS_ANDAMENTO && !$t->isOverdue())->count(),
             'concluidas' => $tasks->where('status', Task::STATUS_CONCLUIDO)->count(),
             'atrasadas' => $tasks->filter(fn ($t) => $t->isOverdue())->count(),
         ];
@@ -79,7 +79,7 @@ class ReportController extends Controller
         $stats = [
             'total' => $tasks->count(),
             'pendentes' => $tasks->where('status', Task::STATUS_PENDENTE)->count(),
-            'andamento' => $tasks->where('status', Task::STATUS_ANDAMENTO)->count(),
+            'andamento' => $tasks->filter(fn ($t) => $t->status === Task::STATUS_ANDAMENTO && !$t->isOverdue())->count(),
             'concluidas' => $tasks->where('status', Task::STATUS_CONCLUIDO)->count(),
             'atrasadas' => $tasks->filter(fn ($t) => $t->isOverdue())->count(),
         ];

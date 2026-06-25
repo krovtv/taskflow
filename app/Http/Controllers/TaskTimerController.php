@@ -12,10 +12,17 @@ class TaskTimerController extends Controller
     {
         $this->authorizeTask($task);
 
-        // Stop any active timer for this user first
-        TaskTimeEntry::where('user_id', $request->user()->id)
+        // Stop any active timer for this user and calculate duration
+        $activeTimers = TaskTimeEntry::where('user_id', $request->user()->id)
             ->whereNull('ended_at')
-            ->update(['ended_at' => now()]);
+            ->get();
+
+        foreach ($activeTimers as $active) {
+            $active->update([
+                'ended_at' => now(),
+                'duration_minutes' => (int) $active->started_at->diffInMinutes(now()),
+            ]);
+        }
 
         $entry = $task->timeEntries()->create([
             'user_id' => $request->user()->id,
@@ -85,6 +92,32 @@ class TaskTimerController extends Controller
                 'started_at' => $active->started_at->toIso8601String(),
                 'elapsed_seconds' => $elapsed,
                 'task' => ['id' => $active->task->id, 'title' => $active->task->title],
+            ],
+        ]);
+    }
+
+    public function taskStatus(Request $request, Task $task)
+    {
+        $this->authorizeTask($task);
+
+        $active = $task->timeEntries()
+            ->where('user_id', $request->user()->id)
+            ->whereNull('ended_at')
+            ->latest('started_at')
+            ->first();
+
+        if (!$active) {
+            return response()->json(['active' => false]);
+        }
+
+        $elapsed = (int) $active->started_at->diffInSeconds(now());
+
+        return response()->json([
+            'active' => true,
+            'entry' => [
+                'id' => $active->id,
+                'started_at' => $active->started_at->toIso8601String(),
+                'elapsed_seconds' => $elapsed,
             ],
         ]);
     }

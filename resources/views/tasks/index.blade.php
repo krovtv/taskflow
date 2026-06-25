@@ -127,7 +127,7 @@
                         </a>
                     </th>
                     <th class="text-left px-5 py-4 hidden md:table-cell">Categoria</th>
-                    <th class="text-left px-5 py-4 hidden lg:table-cell">Progresso</th>
+                    <th class="text-left px-5 py-4 hidden lg:table-cell">Andamento</th>
                     <th class="text-left px-5 py-4">
                         <a href="{{ route('tasks.index', array_merge(request()->query(), ['sort' => 'due_date', 'direction' => ($sort === 'due_date' && $direction === 'asc' ? 'desc' : 'asc')])) }}"
                            class="inline-flex items-center gap-1 hover:text-kvnavy dark:hover:text-white transition-colors">
@@ -218,19 +218,32 @@
                                  {{ $task->category_label }}
                              </span>
                         </td>
-                        {{-- PROGRESSO --}}
+                        {{-- ANDAMENTO + TEMPO (SLA) --}}
                         <td class="px-5 py-4 hidden lg:table-cell">
-                            @if($task->progress > 0)
-                                <div class="flex items-center gap-2 min-w-[80px]">
-                                    <div class="flex-1 h-1.5 rounded-full bg-slate-200 dark:bg-gray-700 overflow-hidden">
+                            @php
+                                $sp = $task->progress;
+                                $dp = $task->dateProgress;
+                                $slaColor = $dp >= 100 ? 'from-red-500 to-red-400'
+                                    : ($dp >= 75 ? 'from-orange-500 to-amber-400'
+                                    : ($dp >= 50 ? 'from-amber-500 to-yellow-400'
+                                    : 'from-kvteal to-emerald-400'));
+                            @endphp
+                            <div class="space-y-1.5 min-w-[80px]">
+                                <div class="flex items-center gap-2">
+                                    <div class="flex-1 h-1 rounded-full bg-slate-200 dark:bg-gray-700 overflow-hidden">
                                         <div class="h-full rounded-full bg-gradient-to-r from-kvteal to-emerald-400 transition-all duration-500"
-                                             style="width: {{ $task->progress }}%"></div>
+                                             style="width: {{ $sp }}%"></div>
                                     </div>
-                                    <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 tabular-nums">{{ $task->progress }}%</span>
+                                    <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 tabular-nums">{{ $sp }}%</span>
                                 </div>
-                            @else
-                                <span class="text-xs text-slate-300 dark:text-slate-600">—</span>
-                            @endif
+                                <div class="flex items-center gap-2">
+                                    <div class="flex-1 h-1 rounded-full bg-slate-200 dark:bg-gray-700 overflow-hidden">
+                                        <div class="h-full rounded-full bg-gradient-to-r {{ $slaColor }} transition-all duration-500"
+                                             style="width: {{ $dp }}%"></div>
+                                    </div>
+                                    <span class="text-[10px] font-bold {{ $dp >= 100 ? 'text-red-500' : 'text-slate-500 dark:text-slate-400' }} tabular-nums">{{ $dp }}%</span>
+                                </div>
+                            </div>
                         </td>
                         {{-- PRAZO --}}
                         <td class="px-5 py-4">
@@ -365,16 +378,31 @@
                 </div>
             </div>
 
-            {{-- PROGRESSO --}}
-            @if($task->progress > 0)
-            <div class="flex items-center gap-2 mb-2">
-                <div class="flex-1 h-1.5 rounded-full bg-slate-200 dark:bg-gray-700 overflow-hidden">
-                    <div class="h-full rounded-full bg-gradient-to-r from-kvteal to-emerald-400 transition-all duration-500"
-                         style="width: {{ $task->progress }}%"></div>
+            {{-- ANDAMENTO + TEMPO (SLA) --}}
+            @php
+                $sp = $task->progress;
+                $dp = $task->dateProgress;
+                $slaColor = $dp >= 100 ? 'from-red-500 to-red-400'
+                    : ($dp >= 75 ? 'from-orange-500 to-amber-400'
+                    : ($dp >= 50 ? 'from-amber-500 to-yellow-400'
+                    : 'from-kvteal to-emerald-400'));
+            @endphp
+            <div class="space-y-1.5 mb-2">
+                <div class="flex items-center gap-2">
+                    <div class="flex-1 h-1 rounded-full bg-slate-200 dark:bg-gray-700 overflow-hidden">
+                        <div class="h-full rounded-full bg-gradient-to-r from-kvteal to-emerald-400 transition-all duration-500"
+                             style="width: {{ $sp }}%"></div>
+                    </div>
+                    <span class="text-[10px] font-bold {{ $sp > 0 ? 'text-kvteal' : 'text-slate-300 dark:text-slate-600' }} tabular-nums">{{ $sp }}%</span>
                 </div>
-                <span class="text-[11px] font-bold text-kvteal tabular-nums">{{ $task->progress }}%</span>
+                <div class="flex items-center gap-2">
+                    <div class="flex-1 h-1 rounded-full bg-slate-200 dark:bg-gray-700 overflow-hidden">
+                        <div class="h-full rounded-full bg-gradient-to-r {{ $slaColor }} transition-all duration-500"
+                             style="width: {{ $dp }}%"></div>
+                    </div>
+                    <span class="text-[10px] font-bold {{ $dp >= 100 ? 'text-red-500' : 'text-slate-400 dark:text-slate-500' }} tabular-nums">{{ $dp }}%</span>
+                </div>
             </div>
-            @endif
 
             {{-- FOOTER --}}
             <div class="flex items-center justify-between mt-2 pt-2 border-t border-slate-100 dark:border-gray-800">
