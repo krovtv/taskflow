@@ -20,7 +20,7 @@ class CheckSlaWarning extends Command
             ->whereNotNull('due_date')
             ->get()
             ->filter(function (Task $task) use ($threshold) {
-                return $task->dateProgress >= $threshold && !$task->isOverdue();
+                return $task->dateProgress >= $threshold;
             });
 
         $count = 0;
