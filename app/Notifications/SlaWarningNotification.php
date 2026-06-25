@@ -27,13 +27,14 @@ class SlaWarningNotification extends Notification
 
     public function toTelegram($notifiable): string
     {
-        $cat = $this->task->category_label;
-        return "⚠️ *Alerta de SLA* · {$this->percentage}%\n"
-            . "Tarefa: {$this->task->title}\n"
-            . "Categoria: {$cat}\n"
-            . "Prazo: {$this->task->due_date->format('d/m/Y H:i')}\n"
-            . "Prioridade: {$this->task->priority_label}\n"
-            . route('tasks.show', $this->task);
+        $due = $this->task->due_date->format('d/m/Y H:i');
+        $pct = $this->percentage;
+        return "⚠️ <b>Alerta de SLA · {$pct}%</b>\n\n"
+            . "<b>{$this->task->title}</b>\n"
+            . "{$this->task->category_label}\n\n"
+            . "📅 Prazo: {$due}\n"
+            . "🏷 Prioridade: {$this->task->priority_label}\n\n"
+            . "🔗 " . route('tasks.show', $this->task);
     }
 
     public function toDatabase($notifiable): array
