@@ -59,15 +59,12 @@ class AuthController extends Controller
 
         $this->sendCode($user);
 
-        Auth::login($user);
-        $request->session()->regenerate();
-
         return redirect()->route('verify.form', ['email' => $user->email]);
     }
 
     public function showVerifyForm(Request $request): View|RedirectResponse
     {
-        $email = $request->query('email', $request->user()?->email);
+        $email = $request->query('email');
 
         if (!$email) {
             return redirect()->route('login');
@@ -88,7 +85,7 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if (!$user || $user->email_verified_at) {
-            return redirect()->route('dashboard');
+            return redirect()->route('login');
         }
 
         if ($user->verification_code !== $code) {
@@ -105,12 +102,12 @@ class AuthController extends Controller
             'verification_code_expires_at' => null,
         ]);
 
-        return redirect()->route('dashboard');
+        return redirect()->route('login')->with('status', 'Conta verificada com sucesso! Faça login para continuar.');
     }
 
     public function resendCode(Request $request): RedirectResponse
     {
-        $email = $request->query('email', $request->user()?->email);
+        $email = $request->query('email');
 
         if (!$email) {
             return redirect()->route('login');
@@ -119,7 +116,7 @@ class AuthController extends Controller
         $user = User::where('email', $email)->first();
 
         if (!$user || $user->email_verified_at) {
-            return redirect()->route('dashboard');
+            return redirect()->route('login');
         }
 
         $this->sendCode($user);
