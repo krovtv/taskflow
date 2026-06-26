@@ -36,6 +36,11 @@
         .scrollbar-thin::-webkit-scrollbar-thumb { background: #1ec2cf; border-radius: 6px; }
         .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
 
+        .sidebar-panel { transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1); }
+        @media (max-width: 767px) {
+            .sidebar-open { transform: translateX(0) !important; }
+        }
+
         @keyframes pageIn {
             from { opacity: 0; transform: translateY(6px); }
             to { opacity: 1; transform: translateY(0); }
@@ -127,17 +132,10 @@
     </div>
 
     {{-- SIDEBAR --}}
-    <aside x-data="{ isDesktop: window.innerWidth >= 768 }"
-           x-show="sidebarOpen || isDesktop" x-cloak
-           @click.away="sidebarOpen = false"
-           x-transition:enter="transition-all duration-300 ease-out"
-           x-transition:enter-start="-translate-x-full"
-           x-transition:enter-end="translate-x-0"
-           x-transition:leave="transition-all duration-200 ease-in"
-           x-transition:leave-start="translate-x-0"
-           x-transition:leave-end="-translate-x-full"
-           class="fixed md:sticky top-0 left-0 z-30 md:z-auto w-64 h-screen bg-gradient-to-b from-kvnavy via-[#070821] to-[#04040f] flex flex-col
-                  shadow-2xl shadow-black/20">
+    <aside x-bind:class="sidebarOpen ? 'sidebar-open' : ''"
+           class="sidebar-panel fixed md:sticky top-0 left-0 z-30 md:z-auto w-64 h-screen bg-gradient-to-b from-kvnavy via-[#070821] to-[#04040f] flex flex-col
+                  -translate-x-full md:translate-x-0 shadow-2xl shadow-black/20"
+           @click.away="sidebarOpen = false">
 
         {{-- LOGO --}}
         <div class="relative px-5 pt-6 pb-5">

@@ -23,3 +23,4 @@ Artisan::command('inspire', function () {
 Schedule::command('tasks:check-deadlines --hours=24')->hourly();
 Schedule::command('tasks:check-sla --threshold=70')->everyMinute();
 Schedule::command('tasks:generate-recurring')->dailyAt('06:00');
+Schedule::command('motivational:send')->everyTenMinutes();
