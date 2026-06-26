@@ -325,7 +325,9 @@
                 </button>
                 <div>
                     <h1 class="text-lg font-bold text-kvnavy dark:text-white tracking-tight">@yield('heading', 'Visão geral')</h1>
-                    <p class="text-[11px] text-slate-400 dark:text-slate-500 font-medium tracking-wide">{{ now()->translatedFormat('l, d \d\e F \d\e Y') }}</p>
+                    <p class="text-[11px] text-slate-400 dark:text-slate-500 font-medium tracking-wide">
+                        Olá, {{ auth()->user()->name }} · {{ now()->translatedFormat('l, d \d\e F \d\e Y') }}
+                    </p>
                 </div>
             </div>
 
