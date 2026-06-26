@@ -16,16 +16,7 @@ class MotivationalNotification extends Notification
 
     public function via($notifiable): array
     {
-        $channels = ['database'];
-        if ($notifiable->telegram_chat_id) {
-            $channels[] = 'telegram';
-        }
-        return $channels;
-    }
-
-    public function toTelegram($notifiable): string
-    {
-        return "{$this->emoji} <b>Mensagem motivacional</b>\n\n{$this->message}\n\nKeep going! 🚀";
+        return ['database'];
     }
 
     public function toDatabase($notifiable): array
