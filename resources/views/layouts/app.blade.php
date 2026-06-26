@@ -709,9 +709,31 @@ function motivationalToast() {
             this.progressStyle = 'width: 100%';
 
             setTimeout(() => { this.progressStyle = 'width: 0%'; }, 50);
+            this.playSound();
 
             if (this.timer) clearTimeout(this.timer);
             this.timer = setTimeout(() => this.dismiss(), 30000);
+        },
+
+        playSound() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const now = ctx.currentTime;
+
+                [523.25, 659.25, 783.99].forEach((freq, i) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.value = freq;
+                    gain.gain.setValueAtTime(0, now + i * 0.12);
+                    gain.gain.linearRampToValueAtTime(0.12, now + i * 0.12 + 0.04);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.12 + 0.3);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(now + i * 0.12);
+                    osc.stop(now + i * 0.12 + 0.3);
+                });
+            } catch (_) {}
         },
 
         dismiss() {
