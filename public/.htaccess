@@ -5,6 +5,12 @@
 
     RewriteEngine On
 
+    # Security: Block access to hidden files
+    RewriteRule "(^|/)\.(?!well-known)" - [F]
+
+    # Security: Block sensitive URLs
+    RewriteRule ^(\.env|composer\.(json|lock|phar)|artisan|storage/logs/) - [F,L]
+
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
@@ -22,4 +28,11 @@
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
+</IfModule>
+
+# Security headers (fallback if PHP middleware fails)
+<IfModule mod_headers.c>
+    Header always set X-Frame-Options "DENY"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
 </IfModule>

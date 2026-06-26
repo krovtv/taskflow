@@ -25,6 +25,8 @@ use Illuminate\Support\Facades\Route;
 */
 Route::get('/', fn () => redirect()->route('login'));
 
+Route::get('/robots.txt', fn () => response("User-agent: *\nDisallow: /\n")->header('Content-Type', 'text/plain'));
+
 /*
 |--------------------------------------------------------------------------
 | Autenticação (visitante)
@@ -32,10 +34,15 @@ Route::get('/', fn () => redirect()->route('login'));
 */
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:auth');
 
     Route::get('/registrar', [AuthController::class, 'showRegister'])->name('register');
-    Route::post('/registrar', [AuthController::class, 'register']);
+    Route::post('/registrar', [AuthController::class, 'register'])->middleware('throttle:auth');
+
+    Route::get('/esqueci-senha', [AuthController::class, 'showForgotPassword'])->name('password.request');
+    Route::post('/esqueci-senha', [AuthController::class, 'sendResetCode'])->middleware('throttle:password')->name('password.email');
+    Route::get('/redefinir-senha', [AuthController::class, 'showResetPassword'])->name('password.reset');
+    Route::post('/redefinir-senha', [AuthController::class, 'resetPassword'])->middleware('throttle:password')->name('password.update');
 });
 
 /*
@@ -44,8 +51,8 @@ Route::middleware('guest')->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::get('/verificar', [AuthController::class, 'showVerifyForm'])->name('verify.form');
-Route::post('/verificar', [AuthController::class, 'verifyCode'])->name('verify.store');
-Route::get('/verificar/reenviar', [AuthController::class, 'resendCode'])->name('verify.resend');
+Route::post('/verificar', [AuthController::class, 'verifyCode'])->middleware('throttle:verification')->name('verify.store');
+Route::get('/verificar/reenviar', [AuthController::class, 'resendCode'])->middleware('throttle:verification')->name('verify.resend');
 
 /*
 |--------------------------------------------------------------------------

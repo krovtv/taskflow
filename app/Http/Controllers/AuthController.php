@@ -3,11 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Notifications\SendPasswordResetCode;
 use App\Notifications\SendVerificationCode;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class AuthController extends Controller
@@ -133,6 +137,74 @@ class AuthController extends Controller
         ]);
 
         $user->notify(new SendVerificationCode($code));
+    }
+
+    public function showForgotPassword(): View
+    {
+        return view('auth.forgot-password');
+    }
+
+    public function sendResetCode(Request $request): RedirectResponse
+    {
+        $request->validate(['email' => ['required', 'email']]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if ($user) {
+            $code = str_pad((string) random_int(0, 9999), 4, '0', STR_PAD_LEFT);
+
+            DB::table('password_reset_tokens')->updateOrInsert(
+                ['email' => $user->email],
+                ['token' => Hash::make($code), 'created_at' => now()],
+            );
+
+            $user->notify(new SendPasswordResetCode($code));
+        }
+
+        return back()->with('status', 'Enviamos um código de recuperação para seu e-mail.');
+    }
+
+    public function showResetPassword(Request $request): View|RedirectResponse
+    {
+        $email = $request->query('email');
+
+        if (!$email) {
+            return redirect()->route('login');
+        }
+
+        return view('auth.reset-password', compact('email'));
+    }
+
+    public function resetPassword(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'email' => ['required', 'email', 'exists:users,email'],
+            'code' => ['required', 'string', 'size:4'],
+            'password' => ['required', 'string', 'min:6', 'confirmed'],
+        ]);
+
+        $record = DB::table('password_reset_tokens')
+            ->where('email', $request->email)
+            ->first();
+
+        if (!$record || !Hash::check($request->code, $record->token)) {
+            throw ValidationException::withMessages([
+                'code' => 'Código inválido.',
+            ]);
+        }
+
+        if (Carbon::parse($record->created_at)->addMinutes(10)->isPast()) {
+            throw ValidationException::withMessages([
+                'code' => 'Código expirado. Solicite um novo.',
+            ]);
+        }
+
+        $user = User::where('email', $request->email)->first();
+        $user->update(['password' => Hash::make($request->password)]);
+
+        DB::table('password_reset_tokens')->where('email', $request->email)->delete();
+
+        return redirect()->route('login')->with('status', 'Senha redefinida com sucesso!');
     }
 
     public function logout(Request $request): RedirectResponse

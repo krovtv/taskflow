@@ -6,6 +6,13 @@
     <h2 class="text-xl font-extrabold text-kvnavy dark:text-white mb-1 tracking-tight">Bem-vindo de volta</h2>
     <p class="text-sm text-slate-400 mb-7 font-medium">Acesse sua conta para continuar organizado.</p>
 
+    @if(session('status'))
+        <div class="mb-5 bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800/50 text-emerald-700 dark:text-emerald-300 rounded-xl px-4 py-3 text-sm font-medium flex items-center gap-2.5">
+            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            {{ session('status') }}
+        </div>
+    @endif
+
     @if($errors->any())
         <div class="mb-5 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800/50 rounded-xl px-4 py-3 text-sm font-medium flex items-start gap-2.5">
             <svg class="w-5 h-5 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"/></svg>
@@ -52,11 +59,14 @@
                 <p class="text-xs font-medium text-red-500 mt-1.5">{{ $message }}</p>
             @enderror
         </div>
-        <label class="flex items-center gap-2.5 text-sm text-slate-500 dark:text-slate-400 cursor-pointer group">
-            <input type="checkbox" name="remember"
-                   class="w-4 h-4 rounded border-slate-300 dark:border-gray-600 text-kvteal focus:ring-kvteal/20 transition-all">
-            <span class="font-medium group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">Lembrar de mim</span>
-        </label>
+        <div class="flex items-center justify-between">
+            <label class="flex items-center gap-2.5 text-sm text-slate-500 dark:text-slate-400 cursor-pointer group">
+                <input type="checkbox" name="remember"
+                       class="w-4 h-4 rounded border-slate-300 dark:border-gray-600 text-kvteal focus:ring-kvteal/20 transition-all">
+                <span class="font-medium group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">Lembrar de mim</span>
+            </label>
+            <a href="{{ route('password.request') }}" class="text-xs font-medium text-kvteal hover:text-kvteal-dark hover:underline transition-colors">Esqueci a senha</a>
+        </div>
 
         <button type="submit" :disabled="loading"
                 class="w-full bg-gradient-to-r from-kvteal to-kvteal-dark hover:from-[#0fa8b3] hover:to-[#0fa8b3] disabled:from-kvteal/60 disabled:to-kvteal-dark/60 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl transition-all duration-200 shadow-sm shadow-kvteal/20 hover:shadow-md hover:shadow-kvteal/30 inline-flex items-center justify-center gap-2.5" x-text="loading ? 'Entrando...' : 'Entrar'">
