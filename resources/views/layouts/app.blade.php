@@ -41,14 +41,6 @@
             .sidebar-open { transform: translateX(0) !important; }
         }
 
-        @keyframes pageIn {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .page-enter {
-            animation: pageIn 0.35s ease-out both;
-        }
-
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -410,7 +402,7 @@
         </header>
 
         {{-- CONTEÚDO --}}
-        <main class="flex-1 p-4 md:p-8 page-enter">
+        <main class="flex-1 p-4 md:p-8">
             {{-- ALERTAS --}}
             @if(session('success'))
                 <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)"
