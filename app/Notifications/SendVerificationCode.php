@@ -19,12 +19,15 @@ class SendVerificationCode extends Notification
 
     public function toMail($notifiable): MailMessage
     {
+        $code = $this->code;
+
         return (new MailMessage)
             ->subject('Código de verificação · KV Tech')
             ->greeting("Olá, {$notifiable->name}!")
-            ->line('Seu código de verificação é:')
-            ->line("**{$this->code}**")
-            ->line('Este código expira em 10 minutos.')
+            ->line('Recebemos uma solicitação de verificação da sua conta.')
+            ->line('Use o código abaixo para confirmar seu e-mail:')
+            ->line("> **{$code}**")
+            ->line('_Este código expira em 10 minutos._')
             ->salutation('Equipe KV Tech');
     }
 }

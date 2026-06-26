@@ -2,8 +2,7 @@
 @section('title', 'Verificar conta')
 
 @section('content')
-<div x-data="{ code: ['', '', '', ''], loading: false }"
-     x-init="$nextTick(() => $refs.i0?.focus())">
+<div x-data="{ loading: false }" x-init="$nextTick(() => $refs.input.focus())">
     <h2 class="text-xl font-extrabold text-kvnavy dark:text-white mb-1 tracking-tight">Verifique sua conta</h2>
     <p class="text-sm text-slate-400 mb-7 font-medium">Enviamos um código de 4 dígitos para <strong class="text-slate-600 dark:text-slate-300">{{ $email }}</strong>.</p>
 
@@ -22,27 +21,30 @@
         @csrf
         <input type="hidden" name="email" value="{{ $email }}">
 
-        <fieldset class="flex justify-center gap-3" x-data="{
-            next(i) { if (i < 3) this.$refs['i' + (i + 1)].focus() },
-            prev(i) { if (i > 0) this.$refs['i' + (i - 1)].focus() },
-            handlePaste(e) {
-                const data = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '').slice(0, 4);
-                data.split('').forEach((d, i) => { if (this.$refs['i' + i]) { this.$refs['i' + i].value = d; this.code[i] = d } });
-                if (data.length === 4) document.querySelector('button[type=submit]')?.focus();
+        <div class="flex justify-center gap-3" x-data="{
+            val: '',
+            get chars() { return this.val.padEnd(4, '').split('').slice(0, 4) },
+            handleInput(e) {
+                const cleaned = e.target.value.replace(/\D/g, '').slice(0, 4);
+                e.target.value = cleaned;
+                this.val = cleaned;
+                if (cleaned.length === 4) document.querySelector('button[type=submit]')?.focus();
             }
         }">
-            <template x-for="(_, i) in 4" :key="i">
-                <input type="text" inputmode="numeric" maxlength="1" required
-                       x-ref="'i' + i"
-                       x-model="code[i]"
-                       @input="if($event.target.value) next(i)"
-                       @keydown.backspace="if(!$event.target.value) prev(i)"
-                       @paste="handlePaste"
-                       name="code[]"
-                       autocomplete="one-time-code"
-                       class="w-14 h-14 text-center text-xl font-extrabold border border-slate-200 dark:border-gray-700 rounded-xl bg-slate-50 dark:bg-gray-800 focus:bg-white dark:focus:bg-gray-800 focus:border-kvteal focus:ring-2 focus:ring-kvteal/20 transition-all outline-none placeholder:text-slate-300 dark:placeholder:text-slate-500">
+            <input type="text" x-ref="input" inputmode="numeric" maxlength="4" required autocomplete="one-time-code"
+                   name="code"
+                   @input="handleInput"
+                   @keydown="if ($event.key === 'Backspace' || $event.key === 'Delete' || $event.key.match(/^\d$/) || $event.key === 'Tab' || $event.key === 'Escape') ; else $event.preventDefault()"
+                   class="absolute opacity-0 pointer-events-none">
+
+            <template x-for="(ch, i) in 4" :key="i">
+                <span @click="$refs.input.focus()"
+                      class="w-14 h-14 flex items-center justify-center text-xl font-extrabold border-2 rounded-xl transition-all duration-150 cursor-text"
+                      :class="chars[i] ? 'border-kvteal bg-kvteal/5 text-kvnavy dark:text-white' : (i === chars.length ? 'border-kvteal ring-2 ring-kvteal/20 bg-white dark:bg-gray-800' : 'border-slate-200 dark:border-gray-700 bg-slate-50 dark:bg-gray-800 text-slate-300 dark:text-slate-600')"
+                      x-text="chars[i] || '_'">
+                </span>
             </template>
-        </fieldset>
+        </div>
 
         <button type="submit" :disabled="loading"
                 class="w-full bg-gradient-to-r from-kvteal to-kvteal-dark hover:from-[#0fa8b3] hover:to-[#0fa8b3] disabled:from-kvteal/60 disabled:to-kvteal-dark/60 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl transition-all duration-200 shadow-sm shadow-kvteal/20 hover:shadow-md hover:shadow-kvteal/30 inline-flex items-center justify-center gap-2.5"
