@@ -40,6 +40,15 @@ Route::middleware('guest')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
+| Verificação de e-mail (acessível logado ou não)
+|--------------------------------------------------------------------------
+*/
+Route::get('/verificar', [AuthController::class, 'showVerifyForm'])->name('verify.form');
+Route::post('/verificar', [AuthController::class, 'verifyCode'])->name('verify.store');
+Route::get('/verificar/reenviar', [AuthController::class, 'resendCode'])->name('verify.resend');
+
+/*
+|--------------------------------------------------------------------------
 | Autenticadas
 |--------------------------------------------------------------------------
 */

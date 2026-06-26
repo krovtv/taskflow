@@ -18,6 +18,8 @@ class User extends Authenticatable
         'password',
         'telegram_chat_id',
         'telegram_active_at',
+        'verification_code',
+        'verification_code_expires_at',
     ];
 
     protected $hidden = [
@@ -31,6 +33,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'telegram_active_at' => 'datetime',
+            'verification_code_expires_at' => 'datetime',
         ];
     }
 
