@@ -56,6 +56,7 @@ class AuthController extends Controller
         $this->sendCode($user);
 
         Auth::login($user);
+        $request->session()->regenerate();
 
         return redirect()->route('verify.form', ['email' => $user->email]);
     }
