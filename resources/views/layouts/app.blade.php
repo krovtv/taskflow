@@ -36,11 +36,12 @@
         .scrollbar-thin::-webkit-scrollbar-thumb { background: #1ec2cf; border-radius: 6px; }
         .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
 
-        .sidebar-overlay { transition: opacity 0.3s ease; }
-        .sidebar-panel { transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1); }
-
-        @media (max-width: 767px) {
-            .sidebar-open { transform: translateX(0) !important; }
+        @keyframes pageIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .page-enter {
+            animation: pageIn 0.35s ease-out both;
         }
 
         @keyframes fadeIn {
@@ -126,9 +127,17 @@
     </div>
 
     {{-- SIDEBAR --}}
-    <aside x-bind:class="sidebarOpen ? 'sidebar-open' : ''"
-           class="sidebar-panel fixed md:sticky top-0 left-0 z-30 md:z-auto w-64 h-screen bg-gradient-to-b from-kvnavy via-[#070821] to-[#04040f] flex flex-col
-                  -translate-x-full md:translate-x-0 shadow-2xl shadow-black/20">
+    <aside x-data="{ isDesktop: window.innerWidth >= 768 }"
+           x-show="sidebarOpen || isDesktop" x-cloak
+           @click.away="sidebarOpen = false"
+           x-transition:enter="transition-all duration-300 ease-out"
+           x-transition:enter-start="-translate-x-full"
+           x-transition:enter-end="translate-x-0"
+           x-transition:leave="transition-all duration-200 ease-in"
+           x-transition:leave-start="translate-x-0"
+           x-transition:leave-end="-translate-x-full"
+           class="fixed md:sticky top-0 left-0 z-30 md:z-auto w-64 h-screen bg-gradient-to-b from-kvnavy via-[#070821] to-[#04040f] flex flex-col
+                  shadow-2xl shadow-black/20">
 
         {{-- LOGO --}}
         <div class="relative px-5 pt-6 pb-5">
@@ -152,7 +161,7 @@
         <nav class="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto scrollbar-thin">
             <p class="px-3 pb-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-white/20">Menu</p>
 
-            <a href="{{ route('dashboard') }}"
+            <a href="{{ route('dashboard') }}" @click="sidebarOpen = false"
                class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-sm
                       {{ request()->routeIs('dashboard') ? 'bg-white/10 text-white font-semibold shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white' }}">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/></svg>
@@ -162,7 +171,7 @@
                 @endif
             </a>
 
-            <a href="{{ route('tasks.index') }}"
+            <a href="{{ route('tasks.index') }}" @click="sidebarOpen = false"
                class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-sm
                       {{ request()->routeIs('tasks.*') ? 'bg-white/10 text-white font-semibold shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white' }}">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"/></svg>
@@ -185,25 +194,25 @@
                 </button>
                 <div x-show="open" x-cloak x-transition:enter="transition-all duration-200" x-transition:enter-start="opacity-0 -translate-y-1" x-transition:enter-end="opacity-100 translate-y-0"
                      class="ml-6 mt-0.5 space-y-0.5 border-l border-white/10 pl-3">
-                    <a href="{{ route('studies.dashboard') }}"
+                    <a href="{{ route('studies.dashboard') }}" @click="sidebarOpen = false"
                        class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm transition-all duration-200
                               {{ request()->routeIs('studies.dashboard') ? 'bg-white/10 text-white font-semibold' : 'text-white/40 hover:text-white hover:bg-white/5' }}">
                         <span class="w-1 h-1 rounded-full {{ request()->routeIs('studies.dashboard') ? 'bg-emerald-400' : 'bg-white/20' }}"></span>
                         Dashboard
                     </a>
-                    <a href="{{ route('studies.timer.index') }}"
+                    <a href="{{ route('studies.timer.index') }}" @click="sidebarOpen = false"
                        class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm transition-all duration-200
                               {{ request()->routeIs('studies.timer.*') ? 'bg-white/10 text-white font-semibold' : 'text-white/40 hover:text-white hover:bg-white/5' }}">
                         <span class="w-1 h-1 rounded-full {{ request()->routeIs('studies.timer.*') ? 'bg-emerald-400' : 'bg-white/20' }}"></span>
                         Timer
                     </a>
-                    <a href="{{ route('studies.flashcards.index') }}"
+                    <a href="{{ route('studies.flashcards.index') }}" @click="sidebarOpen = false"
                        class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm transition-all duration-200
                               {{ request()->routeIs('studies.flashcards.*') ? 'bg-white/10 text-white font-semibold' : 'text-white/40 hover:text-white hover:bg-white/5' }}">
                         <span class="w-1 h-1 rounded-full {{ request()->routeIs('studies.flashcards.*') ? 'bg-emerald-400' : 'bg-white/20' }}"></span>
                         Flashcards
                     </a>
-                    <a href="{{ route('studies.specializations.index') }}"
+                    <a href="{{ route('studies.specializations.index') }}" @click="sidebarOpen = false"
                        class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm transition-all duration-200
                               {{ request()->routeIs('studies.specializations.*') ? 'bg-white/10 text-white font-semibold' : 'text-white/40 hover:text-white hover:bg-white/5' }}">
                         <span class="w-1 h-1 rounded-full {{ request()->routeIs('studies.specializations.*') ? 'bg-emerald-400' : 'bg-white/20' }}"></span>
@@ -403,7 +412,7 @@
         </header>
 
         {{-- CONTEÚDO --}}
-        <main class="flex-1 p-4 md:p-8">
+        <main class="flex-1 p-4 md:p-8 page-enter">
             {{-- ALERTAS --}}
             @if(session('success'))
                 <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)"
