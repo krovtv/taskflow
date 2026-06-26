@@ -3,7 +3,7 @@
 
 @section('content')
 <div x-data="{ loading: false, showPassword: false }">
-    <h2 class="text-xl font-extrabold text-kvnavy dark:text-white mb-1 tracking-tight">Bem-vindo de volta</h2>
+    <h2 class="text-xl font-extrabold text-kvnavy dark:text-white mb-1 tracking-tight">Bem-vindo</h2>
     <p class="text-sm text-slate-400 mb-7 font-medium">Acesse sua conta para continuar organizado.</p>
 
     @if(session('status'))
