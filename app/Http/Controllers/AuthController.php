@@ -76,11 +76,10 @@ class AuthController extends Controller
     {
         $request->validate([
             'email' => ['required', 'email', 'exists:users,email'],
-            'code' => ['required', 'array', 'size:4'],
-            'code.*' => ['required', 'string', 'size:1', 'digits:1'],
+            'code' => ['required', 'string', 'size:4'],
         ]);
 
-        $code = implode('', $request->code);
+        $code = $request->code;
 
         $user = User::where('email', $request->email)->first();
 
@@ -89,11 +88,11 @@ class AuthController extends Controller
         }
 
         if ($user->verification_code !== $code) {
-            return back()->withErrors(['code' => 'Código inválido.'])->onlyInput('email');
+            return back()->withErrors(['code' => 'Código inválido.'])->onlyInput('email', 'code');
         }
 
         if (!$user->verification_code_expires_at || $user->verification_code_expires_at->isPast()) {
-            return back()->withErrors(['code' => 'Código expirado. Solicite um novo.'])->onlyInput('email');
+            return back()->withErrors(['code' => 'Código expirado. Solicite um novo.'])->onlyInput('email', 'code');
         }
 
         $user->update([
