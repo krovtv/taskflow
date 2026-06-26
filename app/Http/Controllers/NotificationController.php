@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
 
 class NotificationController extends Controller
@@ -46,5 +47,24 @@ class NotificationController extends Controller
         }
 
         return redirect()->route('notifications.index');
+    }
+
+    public function latestMotivational(Request $request): JsonResponse
+    {
+        $notification = $request->user()->notifications()
+            ->where('data->type', 'motivational')
+            ->whereNull('read_at')
+            ->latest()
+            ->first();
+
+        if (! $notification) {
+            return response()->json(null);
+        }
+
+        return response()->json([
+            'id' => $notification->id,
+            'message' => $notification->data['message'] ?? '',
+            'created_at' => $notification->created_at,
+        ]);
     }
 }

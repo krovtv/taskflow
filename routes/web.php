@@ -136,6 +136,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/notificacoes/{id}/ler', [NotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::get('/notificacoes/{id}/redirect', [NotificationController::class, 'redirect'])->name('notifications.redirect');
     Route::patch('/notificacoes/ler-todas', [NotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
+    Route::get('/motivacional/ultima', [NotificationController::class, 'latestMotivational'])->name('motivational.latest');
 
     /*
     |----------------------------------------------------------------------

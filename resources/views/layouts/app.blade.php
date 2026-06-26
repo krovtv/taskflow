@@ -636,5 +636,94 @@ function topTimer() {
     }
 }
 </script>
+
+{{-- TOAST MOTIVACIONAL --}}
+<div x-data="motivationalToast()"
+     x-show="show"
+     x-transition:enter="transition-all duration-500 ease-out"
+     x-transition:enter-start="opacity-0 translate-y-4 scale-95"
+     x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+     x-transition:leave="transition-all duration-300 ease-in"
+     x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+     x-transition:leave-end="opacity-0 translate-y-4 scale-95"
+     x-cloak
+     class="fixed bottom-6 right-6 z-50 max-w-sm w-full">
+    <div class="bg-white dark:bg-gray-900 rounded-2xl border border-kvteal/20 dark:border-kvteal/10 shadow-2xl shadow-kvteal/10 overflow-hidden">
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-kvteal to-kvteal-dark"></div>
+        <div class="p-5">
+            <div class="flex items-start gap-3.5">
+                <div class="w-10 h-10 rounded-xl bg-kvteal/10 flex items-center justify-center shrink-0 text-xl" x-text="emoji"></div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-xs font-semibold uppercase tracking-wider text-kvteal mb-1">Mensagem motivacional</p>
+                    <p class="text-sm text-slate-700 dark:text-slate-200 leading-relaxed" x-text="message"></p>
+                </div>
+                <button @click="dismiss()" class="shrink-0 w-6 h-6 rounded-full hover:bg-slate-100 dark:hover:bg-gray-800 flex items-center justify-center text-slate-400 hover:text-slate-600 transition-colors">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="mt-3 h-1 bg-slate-100 dark:bg-gray-800 rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-kvteal to-kvteal-dark rounded-full transition-all duration-[30s] linear"
+                     :style="progressStyle"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function motivationalToast() {
+    return {
+        show: false,
+        message: '',
+        emoji: '',
+        notificationId: null,
+        lastSeenId: null,
+        progressStyle: 'width: 100%',
+        timer: null,
+        pollTimer: null,
+
+        init() {
+            this.poll();
+            this.pollTimer = setInterval(() => this.poll(), 10000);
+        },
+
+        poll() {
+            fetch('{{ route('motivational.latest') }}')
+                .then(r => r.json())
+                .then(data => {
+                    if (!data) return;
+                    if (data.id === this.lastSeenId) return;
+                    if (this.notificationId === data.id) return;
+                    this.notificationId = data.id;
+                    this.showToast(data.message, data.id);
+                })
+                .catch(() => {});
+        },
+
+        showToast(msg, id) {
+            const match = msg.match(/^([\p{Emoji}]+)\s(.+)$/u);
+            this.emoji = match ? match[1] : '💪';
+            this.message = match ? match[2] : msg;
+            this.notificationId = id;
+            this.lastSeenId = id;
+            this.show = true;
+            this.progressStyle = 'width: 100%';
+
+            setTimeout(() => { this.progressStyle = 'width: 0%'; }, 50);
+
+            if (this.timer) clearTimeout(this.timer);
+            this.timer = setTimeout(() => this.dismiss(), 30000);
+        },
+
+        dismiss() {
+            this.show = false;
+            if (this.timer) clearTimeout(this.timer);
+            if (this.notificationId) {
+                fetch('/notificacoes/' + this.notificationId + '/ler', { method: 'PATCH', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Content-Type': 'application/json' } }).catch(() => {});
+            }
+            this.notificationId = null;
+        }
+    }
+}
+</script>
 </body>
 </html>
