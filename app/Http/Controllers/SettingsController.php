@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Services\TelegramService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class SettingsController extends Controller
@@ -55,7 +56,10 @@ class SettingsController extends Controller
 
     public function webhook(Request $request, TelegramService $telegram): \Illuminate\Http\Response
     {
-        $data = $request->all();
+        $data = json_decode($request->getContent(), true);
+
+        Log::info('Telegram webhook recebido', ['data' => $data]);
+
         $message = $data['message'] ?? [];
 
         if (!isset($message['text'], $message['chat']['id'])) {
@@ -95,8 +99,15 @@ class SettingsController extends Controller
                     . "• 📊 Alertas de SLA\n\n"
                     . "<i>Bora produzir! 🚀</i>"
                 );
+
+                Log::info('Telegram: usuário conectado', [
+                    'user_id' => $user->id,
+                    'email' => $user->email,
+                    'chat_id' => $chatId,
+                ]);
             } else {
                 $telegram->sendMessage($chatId, "❌ Token inválido ou expirado.\n\nAcesse o sistema e gere um novo link em Configurações > Telegram.");
+                Log::warning('Telegram: token inválido', ['token' => $token]);
             }
         }
 

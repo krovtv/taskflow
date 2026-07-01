@@ -27,6 +27,7 @@ Route::get('/', fn () => redirect()->route('login'));
 
 Route::get('/robots.txt', fn () => response("User-agent: *\nDisallow: /\n")->header('Content-Type', 'text/plain'));
 
+Route::get('/telegram/webhook', fn () => response('Webhook ativo ✅'));
 Route::post('/telegram/webhook', [SettingsController::class, 'webhook'])->name('telegram.webhook');
 
 /*
