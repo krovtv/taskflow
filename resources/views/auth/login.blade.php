@@ -59,8 +59,8 @@
                 <p class="text-xs font-medium text-red-500 mt-1.5">{{ $message }}</p>
             @enderror
         </div>
-        <div class="flex items-center justify-between">
-            <label class="flex items-center gap-2.5 text-sm text-slate-500 dark:text-slate-400 cursor-pointer group">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            <label class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 cursor-pointer group">
                 <input type="checkbox" name="remember"
                        class="w-4 h-4 rounded border-slate-300 dark:border-gray-600 text-kvteal focus:ring-kvteal/20 transition-all">
                 <span class="font-medium group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">Lembrar de mim</span>
