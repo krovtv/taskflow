@@ -318,7 +318,7 @@
         {{-- TOPBAR --}}
         <header class="bg-white/70 dark:bg-gray-900/80 backdrop-blur-xl border-b border-slate-200/50 dark:border-gray-800/50 px-4 md:px-8 py-3 flex items-center justify-between sticky top-0 z-10 shadow-sm shadow-slate-200/30 dark:shadow-black/10">
             <div class="flex items-center gap-4 min-w-0">
-                <button @click="sidebarOpen = !sidebarOpen"
+                <button @click.stop="sidebarOpen = !sidebarOpen"
                         class="md:hidden w-9 h-9 flex items-center justify-center rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-gray-800 transition-all shrink-0">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
                 </button>
