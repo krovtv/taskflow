@@ -53,4 +53,35 @@ class TelegramService
 
         return null;
     }
+
+    public function getBotUsername(): ?string
+    {
+        $info = $this->getMe();
+        return $info['username'] ?? null;
+    }
+
+    public function setWebhook(string $url): array
+    {
+        if (empty($this->token)) {
+            return ['ok' => false, 'description' => 'Token não configurado'];
+        }
+
+        $response = Http::timeout(10)->post("{$this->apiUrl}/setWebhook", [
+            'url' => $url,
+            'allowed_updates' => ['message'],
+        ]);
+
+        return $response->json() ?? ['ok' => false, 'description' => 'Sem resposta da API'];
+    }
+
+    public function removeWebhook(): array
+    {
+        if (empty($this->token)) {
+            return ['ok' => false, 'description' => 'Token não configurado'];
+        }
+
+        $response = Http::timeout(10)->post("{$this->apiUrl}/deleteWebhook");
+
+        return $response->json() ?? ['ok' => false, 'description' => 'Sem resposta da API'];
+    }
 }

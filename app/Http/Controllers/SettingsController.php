@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Services\TelegramService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -41,6 +42,43 @@ class SettingsController extends Controller
         ]);
 
         return back()->with('success', 'Telegram desconectado.');
+    }
+
+    public function webhook(Request $request, TelegramService $telegram): \Illuminate\Http\Response
+    {
+        $data = $request->all();
+        $message = $data['message'] ?? [];
+
+        if (!isset($message['text'], $message['chat']['id'])) {
+            return response('OK');
+        }
+
+        $text = $message['text'];
+        $chatId = $message['chat']['id'];
+
+        if (str_starts_with($text, '/start')) {
+            $parts = explode(' ', $text, 2);
+            $email = trim($parts[1] ?? '');
+
+            if (empty($email)) {
+                $telegram->sendMessage($chatId, "👋 Olá! Para conectar sua conta, acesse o sistema e clique em \"Conectar com Telegram\".");
+                return response('OK');
+            }
+
+            $user = User::where('email', $email)->first();
+
+            if ($user) {
+                $user->update([
+                    'telegram_chat_id' => $chatId,
+                    'telegram_active_at' => now(),
+                ]);
+                $telegram->sendMessage($chatId, "✅ Conta vinculada com sucesso, <b>{$user->name}</b>!\n\nAgora você receberá notificações de tarefas aqui.");
+            } else {
+                $telegram->sendMessage($chatId, "❌ E-mail <b>{$email}</b> não encontrado.\n\nVerifique se digitou o mesmo e-mail cadastrado no sistema.");
+            }
+        }
+
+        return response('OK');
     }
 
     public function telegramTest(Request $request, TelegramService $telegram): RedirectResponse
