@@ -72,7 +72,20 @@ class SettingsController extends Controller
                     'telegram_chat_id' => $chatId,
                     'telegram_active_at' => now(),
                 ]);
-                $telegram->sendMessage($chatId, "✅ Conta vinculada com sucesso, <b>{$user->name}</b>!\n\nAgora você receberá notificações de tarefas aqui.");
+
+                $tasksHoje = $user->tasks()->whereDate('due_date', today())->where('status', '!=', 'concluido')->count();
+                $tasksPendentes = $user->tasks()->where('status', '!=', 'concluido')->count();
+
+                $telegram->sendMessage($chatId,
+                    "🎉 <b>Bem-vindo(a), {$user->name}!</b>\n\n"
+                    . "🔔 Conta vinculada com sucesso!\n\n"
+                    . "📌 Você tem <b>{$tasksPendentes}</b> tarefa(s) pendente(s) no total\n"
+                    . "📅 Sendo <b>{$tasksHoje}</b> para hoje\n\n"
+                    . "A partir de agora você receberá:\n"
+                    . "• ⏰ Lembretes de tarefas próximas do prazo\n"
+                    . "• 📊 Alertas de SLA\n\n"
+                    . "<i>Bora produzir! 🚀</i>"
+                );
             } else {
                 $telegram->sendMessage($chatId, "❌ E-mail <b>{$email}</b> não encontrado.\n\nVerifique se digitou o mesmo e-mail cadastrado no sistema.");
             }

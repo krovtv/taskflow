@@ -74,14 +74,10 @@
             @if($botInfo)
                 @php $botUsername = $botInfo['username'] ?? null; @endphp
                 @if($botUsername)
-                    <div class="bg-sky-50/60 dark:bg-sky-900/20 border border-sky-200/50 dark:border-sky-800/40 rounded-xl p-4 mb-5 text-sm">
-                        <p class="font-semibold text-sky-700 dark:text-sky-300 mb-2">Como conectar:</p>
-                        <ol class="list-decimal pl-4 space-y-2 text-xs text-slate-600 dark:text-slate-300">
-                            <li>Clique no botão abaixo para abrir o Telegram</li>
-                            <li>Toque em <strong>"Iniciar"</strong> ou envie <code class="font-mono bg-sky-100 dark:bg-sky-900/40 px-1 rounded">/start</code></li>
-                            <li>Sua conta será vinculada automaticamente! ✅</li>
-                        </ol>
-                    </div>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">
+                        Ao clicar no botão, o Telegram será aberto. <br class="sm:hidden">
+                        Toque em <strong class="text-slate-700 dark:text-slate-200">Iniciar</strong> e o <code class="font-mono text-xs bg-sky-100 dark:bg-sky-900/40 px-1.5 rounded">/start</code> será enviado automaticamente.
+                    </p>
 
                     <a href="https://t.me/{{ $botUsername }}?start={{ urlencode(auth()->user()->email) }}"
                        target="_blank"
