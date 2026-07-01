@@ -53,7 +53,7 @@
 
             <template x-for="(ch, i) in 4" :key="i">
                 <span @click="$refs.input.focus()"
-                      class="w-14 h-14 flex items-center justify-center text-xl font-extrabold border-2 rounded-xl transition-all duration-150 cursor-text"
+                      class="w-12 sm:w-14 h-12 sm:h-14 flex items-center justify-center text-lg sm:text-xl font-extrabold border-2 rounded-xl transition-all duration-150 cursor-text"
                       :class="chars[i] ? 'border-kvteal bg-kvteal/5 text-kvnavy dark:text-white' : (i === chars.length ? 'border-kvteal ring-2 ring-kvteal/20 bg-white dark:bg-gray-800' : 'border-slate-200 dark:border-gray-700 bg-slate-50 dark:bg-gray-800 text-slate-300 dark:text-slate-600')"
                       x-text="chars[i] || '_'">
                 </span>

@@ -57,7 +57,7 @@
             <p class="text-white/25 dark:text-gray-400 text-xs mt-1.5 font-medium tracking-wide">Organizador de Estudos, Projetos e Trabalho</p>
         </div>
 
-        <div class="bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm rounded-2xl shadow-2xl shadow-black/30 p-8 border border-white/10 dark:border-gray-700/50 auth-card">
+        <div class="bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm rounded-2xl shadow-2xl shadow-black/30 p-6 md:p-8 border border-white/10 dark:border-gray-700/50 auth-card">
             @yield('content')
         </div>
 
