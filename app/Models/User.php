@@ -18,6 +18,7 @@ class User extends Authenticatable
         'password',
         'telegram_chat_id',
         'telegram_active_at',
+        'telegram_token',
         'verification_code',
         'verification_code_expires_at',
     ];

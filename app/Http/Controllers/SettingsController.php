@@ -12,10 +12,19 @@ class SettingsController extends Controller
 {
     public function telegram(Request $request, TelegramService $telegram): View
     {
+        $user = $request->user();
+
+        if (! $user->telegram_token) {
+            $user->update([
+                'telegram_token' => bin2hex(random_bytes(8)),
+            ]);
+            $user->refresh();
+        }
+
         $botInfo = $telegram->getMe();
 
         return view('settings.telegram', [
-            'user' => $request->user(),
+            'user' => $user,
             'botInfo' => $botInfo,
         ]);
     }
@@ -58,14 +67,14 @@ class SettingsController extends Controller
 
         if (str_starts_with($text, '/start')) {
             $parts = explode(' ', $text, 2);
-            $email = trim($parts[1] ?? '');
+            $token = trim($parts[1] ?? '');
 
-            if (empty($email)) {
+            if (empty($token)) {
                 $telegram->sendMessage($chatId, "👋 Olá! Para conectar sua conta, acesse o sistema e clique em \"Conectar com Telegram\".");
                 return response('OK');
             }
 
-            $user = User::where('email', $email)->first();
+            $user = User::where('telegram_token', $token)->first();
 
             if ($user) {
                 $user->update([
@@ -87,7 +96,7 @@ class SettingsController extends Controller
                     . "<i>Bora produzir! 🚀</i>"
                 );
             } else {
-                $telegram->sendMessage($chatId, "❌ E-mail <b>{$email}</b> não encontrado.\n\nVerifique se digitou o mesmo e-mail cadastrado no sistema.");
+                $telegram->sendMessage($chatId, "❌ Token inválido ou expirado.\n\nAcesse o sistema e gere um novo link em Configurações > Telegram.");
             }
         }
 
