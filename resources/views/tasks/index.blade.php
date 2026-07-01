@@ -6,36 +6,38 @@
 {{-- FILTROS + BUSCA --}}
 <div class="bg-white dark:bg-gray-900 rounded-2xl border border-slate-200/70 dark:border-gray-700/50 p-4 md:p-5 mb-6 shadow-sm animate-in">
     <form method="GET" class="space-y-4">
-        <div class="flex flex-wrap gap-3 items-end">
-            <div class="flex-1 min-w-[200px]">
+        <div class="flex flex-wrap gap-2 sm:gap-3 items-end">
+            <div class="flex-1 min-w-0 w-full sm:min-w-[200px] sm:w-auto">
                 <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wider">Buscar</label>
                 <div class="relative">
                     <input type="text" name="search" value="{{ $search ?? '' }}"
-                           placeholder="Pesquisar por título, descrição ou tags..."
+                           placeholder="Pesquisar..."
                            class="w-full border border-slate-200 dark:border-gray-700 rounded-xl pl-10 pr-4 py-2.5 text-sm bg-slate-50 dark:bg-gray-800 focus:bg-white dark:focus:bg-gray-800 focus:border-kvteal focus:ring-2 focus:ring-kvteal/20 transition-all outline-none placeholder:text-slate-300 dark:placeholder:text-slate-500">
                     <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
                 </div>
             </div>
-            <div>
+            <div class="w-full sm:w-auto">
                 <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wider">Categoria</label>
-                <select name="category" class="border border-slate-200 dark:border-gray-700 rounded-xl px-3.5 py-2.5 text-sm bg-slate-50 dark:bg-gray-800 focus:bg-white dark:focus:bg-gray-800 focus:border-kvteal focus:ring-2 focus:ring-kvteal/20 transition-all outline-none">
+                <select name="category" class="w-full sm:w-auto border border-slate-200 dark:border-gray-700 rounded-xl px-3.5 py-2.5 text-sm bg-slate-50 dark:bg-gray-800 focus:bg-white dark:focus:bg-gray-800 focus:border-kvteal focus:ring-2 focus:ring-kvteal/20 transition-all outline-none">
                     <option value="">Todas</option>
                     @foreach($categories as $id => $name)
                         <option value="{{ $id }}" @selected($currentCategory == $id)>{{ $name }}</option>
                     @endforeach
                 </select>
             </div>
-            <div>
+            <div class="w-full sm:w-auto">
                 <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wider">Status</label>
-                <select name="status" class="border border-slate-200 dark:border-gray-700 rounded-xl px-3.5 py-2.5 text-sm bg-slate-50 dark:bg-gray-800 focus:bg-white dark:focus:bg-gray-800 focus:border-kvteal focus:ring-2 focus:ring-kvteal/20 transition-all outline-none">
+                <select name="status" class="w-full sm:w-auto border border-slate-200 dark:border-gray-700 rounded-xl px-3.5 py-2.5 text-sm bg-slate-50 dark:bg-gray-800 focus:bg-white dark:focus:bg-gray-800 focus:border-kvteal focus:ring-2 focus:ring-kvteal/20 transition-all outline-none">
                     <option value="">Todos</option>
                     @foreach($statuses as $key => $label)
                         <option value="{{ $key }}" @selected($currentStatus === $key)>{{ $label }}</option>
                     @endforeach
                 </select>
             </div>
-            <button class="bg-kvnavy hover:bg-kvnavy-light text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-all shadow-sm">Filtrar</button>
-            <a href="{{ route('tasks.index') }}" class="text-sm text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 px-3 py-2.5 font-medium transition-colors">Limpar</a>
+            <div class="flex gap-2 w-full sm:w-auto">
+                <button class="flex-1 sm:flex-none bg-kvnavy hover:bg-kvnavy-light text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-all shadow-sm">Filtrar</button>
+                <a href="{{ route('tasks.index') }}" class="flex-1 sm:flex-none text-center text-sm text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 px-3 py-2.5 font-medium transition-colors">Limpar</a>
+            </div>
         </div>
         <input type="hidden" name="sort" value="{{ $sort }}">
         <input type="hidden" name="direction" value="{{ $direction }}">
@@ -84,9 +86,9 @@
             </button>
         </div>
         <a href="{{ route('reports.index', request()->query()) }}"
-           class="bg-red-50 dark:bg-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/40 text-red-500 dark:text-red-400 hover:text-red-600 text-sm font-semibold px-4 py-2.5 rounded-xl transition-all border border-red-200 dark:border-red-800/50 hover:border-red-300 inline-flex items-center gap-2">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
-            Relatório PDF
+           class="bg-red-50 dark:bg-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/40 text-red-500 dark:text-red-400 hover:text-red-600 text-sm font-semibold px-3 sm:px-4 py-2.5 rounded-xl transition-all border border-red-200 dark:border-red-800/50 hover:border-red-300 inline-flex items-center gap-1 sm:gap-2">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+            <span class="hidden sm:inline">Relatório PDF</span>
         </a>
     </div>
 </div>

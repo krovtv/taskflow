@@ -317,20 +317,20 @@
     <div class="flex-1 flex flex-col min-w-0">
         {{-- TOPBAR --}}
         <header class="bg-white/70 dark:bg-gray-900/80 backdrop-blur-xl border-b border-slate-200/50 dark:border-gray-800/50 px-4 md:px-8 py-3 flex items-center justify-between sticky top-0 z-10 shadow-sm shadow-slate-200/30 dark:shadow-black/10">
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-4 min-w-0">
                 <button @click="sidebarOpen = !sidebarOpen"
-                        class="md:hidden w-9 h-9 flex items-center justify-center rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-gray-800 transition-all">
+                        class="md:hidden w-9 h-9 flex items-center justify-center rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-gray-800 transition-all shrink-0">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
                 </button>
-                <div>
-                    <h1 class="text-lg font-bold text-kvnavy dark:text-white tracking-tight">@yield('heading', 'Visão geral')</h1>
-                    <p class="text-[11px] text-slate-400 dark:text-slate-500 font-medium tracking-wide">
-                        Olá, {{ auth()->user()->name }} · {{ now()->translatedFormat('l, d \d\e F \d\e Y') }}
+                <div class="min-w-0">
+                    <h1 class="text-lg font-bold text-kvnavy dark:text-white tracking-tight truncate">@yield('heading', 'Visão geral')</h1>
+                    <p class="text-[11px] text-slate-400 dark:text-slate-500 font-medium tracking-wide truncate">
+                        Olá, {{ auth()->user()->name }}<span class="hidden sm:inline"> · {{ now()->translatedFormat('l, d \d\e F \d\e Y') }}</span>
                     </p>
                 </div>
             </div>
 
-            <div class="flex items-center gap-2.5">
+            <div class="flex items-center gap-1 sm:gap-2.5">
                 {{-- RELÓGIO DIGITAL --}}
                 <span x-data="{ now: new Date() }" x-init="setInterval(() => now = new Date(), 1000)"
                       x-text="now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })"
@@ -358,7 +358,7 @@
                         @endauth
                     </button>
                     <div x-show="notifOpen" x-cloak
-                         class="dropdown-animate absolute right-0 mt-2.5 w-80 bg-white dark:bg-gray-900 border border-slate-200/70 dark:border-gray-700/50 rounded-xl shadow-xl shadow-slate-200/50 dark:shadow-black/30 overflow-hidden z-20">
+                         class="dropdown-animate fixed sm:absolute right-2 sm:right-0 top-16 sm:top-full mt-0 sm:mt-2.5 left-2 sm:left-auto w-auto sm:w-80 bg-white dark:bg-gray-900 border border-slate-200/70 dark:border-gray-700/50 rounded-xl shadow-xl shadow-slate-200/50 dark:shadow-black/30 overflow-hidden z-20">
                         <div class="px-4 py-3 border-b border-slate-100 dark:border-gray-800 flex items-center justify-between bg-gradient-to-r from-kvteal/5 to-transparent">
                             <span class="font-semibold text-sm text-kvnavy dark:text-white">Notificações</span>
                             <a href="{{ route('notifications.index') }}" class="text-xs font-medium text-kvteal hover:text-kvteal-dark transition-colors">Ver todas</a>
@@ -639,7 +639,7 @@ function topTimer() {
      x-transition:leave-start="opacity-100 translate-y-0 scale-100"
      x-transition:leave-end="opacity-0 translate-y-4 scale-95"
      x-cloak
-     class="fixed bottom-6 right-6 z-50 max-w-sm w-full">
+     class="fixed bottom-4 sm:bottom-6 left-4 right-4 sm:left-auto sm:right-6 z-50 sm:max-w-sm">
     <div class="bg-white dark:bg-gray-900 rounded-2xl border border-kvteal/20 dark:border-kvteal/10 shadow-2xl shadow-kvteal/10 overflow-hidden">
         <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-kvteal to-kvteal-dark"></div>
         <div class="p-5">
